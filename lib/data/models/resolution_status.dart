@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 /// Outcome of resolving an app's R packages against the WebR WASM repo.
 enum ResolutionState {
   /// Not yet attempted (e.g. freshly imported, or live URL).

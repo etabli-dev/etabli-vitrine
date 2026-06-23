@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 import '../../data/models/resolution_status.dart';
 
 /// Result of scanning raw Shiny source for required R packages and checking

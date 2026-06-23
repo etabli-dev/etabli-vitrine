@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 /// How an app entered the display case. Drives staging/run behavior and
 /// what offline guarantees Vitrine can make for it.
 enum SourceType {

@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vitrine/features/import/import_router.dart';
 

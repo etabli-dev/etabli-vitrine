@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'database.dart';

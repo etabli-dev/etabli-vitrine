@@ -1,3 +1,6 @@
+# Copyright 2026 Raban Heller
+# SPDX-License-Identifier: Apache-2.0
+
 #!/usr/bin/env bash
 # Fetch vendored open-source runtimes (WebR + shinylive) at build time.
 # Provenance documented in THIRD_PARTY.md; F-Droid scans this script to verify

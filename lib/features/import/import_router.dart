@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 import 'package:path/path.dart' as p;
 
 enum ImportKind { shinyliveBundle, rawSource, unknown }
