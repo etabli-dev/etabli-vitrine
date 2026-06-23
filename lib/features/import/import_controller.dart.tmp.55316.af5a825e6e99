@@ -1,0 +1,223 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:archive/archive.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
+
+import '../../data/models/resolution_status.dart';
+import '../../data/models/shiny_app.dart';
+import '../../data/models/source_type.dart';
+import '../../data/repositories/library_repository.dart';
+import '../../runtime/staging_service.dart';
+import 'import_router.dart';
+import 'package_resolver.dart';
+
+final importControllerProvider = Provider<ImportController>(
+  (ref) => ImportController(
+    ref.watch(stagingServiceProvider),
+    ref.watch(libraryRepositoryProvider),
+  ),
+);
+
+/// Brings apps into the display case. Milestone 3 covers shinylive bundles
+/// (the bundled sample); Files/zip/share/URL sources arrive in Milestone 5.
+class ImportController {
+  ImportController(this._staging, this._library);
+
+  final StagingService _staging;
+  final LibraryRepository _library;
+  static const _uuid = Uuid();
+
+  static const String _sampleAsset = 'assets/samples/shinylive-sample.zip';
+
+  /// Imports the bundled sample shinylive app and returns its library entry.
+  Future<ShinyApp> importSample() async {
+    final data = await rootBundle.load(_sampleAsset);
+    return importShinyliveZip(
+      data.buffer.asUint8List(),
+      name: 'Sample (shinylive)',
+      sourceUri: 'asset:$_sampleAsset',
+    );
+  }
+
+  /// Stages a self-contained shinylive bundle and records it in the library.
+  /// Shinylive bundles ship their own runtime, so they are offline-ready.
+  Future<ShinyApp> importShinyliveZip(
+    Uint8List zipBytes, {
+    required String name,
+    String? sourceUri,
+  }) async {
+    final id = _uuid.v4();
+    await _staging.stageZip(zipBytes, id);
+    final app = ShinyApp(
+      id: id,
+      name: name,
+      sourceType: SourceType.shinyliveZip,
+      resolutionState: ResolutionState.ready,
+      stagedPath: id,
+      sourceUri: sourceUri,
+      importedAt: DateTime.now(),
+    );
+    await _library.upsert(app);
+    return app;
+  }
+
+  // ── Import sources (Milestone 5) ────────────────────────────────────────
+
+  /// Reject absurdly large imports before doing any work (sandboxing).
+  static const int maxImportBytes = 300 * 1024 * 1024;
+
+  /// Classifies a zip and routes it to the right importer (shinylive bundle or
+  /// raw source), stripping any single wrapping folder. Throws [FormatException]
+  /// if it is neither.
+  Future<ShinyApp> importZipBytes(
+    Uint8List zipBytes, {
+    required String name,
+    String? sourceUri,
+  }) async {
+    if (zipBytes.length > maxImportBytes) {
+      throw const FormatException('Import exceeds the size limit.');
+    }
+    final Archive archive;
+    try {
+      archive = ZipDecoder().decodeBytes(zipBytes);
+    } catch (_) {
+      throw const FormatException('Not a valid zip archive.');
+    }
+    final names = archive.where((e) => e.isFile).map((e) => e.name);
+    final decision = ImportRouter.classify(names);
+
+    switch (decision.kind) {
+      case ImportKind.shinyliveBundle:
+        final id = _uuid.v4();
+        await _staging.stageArchiveSubtree(id, archive, decision.rootPrefix);
+        final app = ShinyApp(
+          id: id,
+          name: name,
+          sourceType: SourceType.shinyliveZip,
+          resolutionState: ResolutionState.ready,
+          stagedPath: id,
+          sourceUri: sourceUri,
+          importedAt: DateTime.now(),
+        );
+        await _library.upsert(app);
+        return app;
+
+      case ImportKind.rawSource:
+        final files = <String, Uint8List>{};
+        for (final e in archive) {
+          if (!e.isFile) continue;
+          final n = e.name.replaceAll('\\', '/');
+          if (!n.startsWith(decision.rootPrefix)) continue;
+          final rel = n.substring(decision.rootPrefix.length);
+          if (rel.isEmpty) continue;
+          files[rel] = Uint8List.fromList(e.content as List<int>);
+        }
+        return importRawSourceFiles(files, name: name, sourceUri: sourceUri);
+
+      case ImportKind.unknown:
+        throw const FormatException(
+            'Not a recognized Shiny app or shinylive bundle.');
+    }
+  }
+
+  /// Downloads a `.zip` from [url] and imports it.
+  Future<ShinyApp> importUrl(String url, {String? name}) async {
+    final uri = Uri.parse(url);
+    final resp = await http.get(uri);
+    if (resp.statusCode != 200) {
+      throw FormatException('Download failed (HTTP ${resp.statusCode}).');
+    }
+    final fallbackName = p.basenameWithoutExtension(uri.path);
+    return importZipBytes(
+      resp.bodyBytes,
+      name: name ?? (fallbackName.isEmpty ? 'Imported app' : fallbackName),
+      sourceUri: url,
+    );
+  }
+
+  // ── Raw Shiny source (Milestone 4) ──────────────────────────────────────
+
+  static const String _sampleAppR = '''library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Établi Vitrine — Raw R sample"),
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("bins", "Number of bins", min = 1, max = 50, value = 30)
+    ),
+    mainPanel(plotOutput("distPlot"))
+  )
+)
+
+server <- function(input, output) {
+  output\$distPlot <- renderPlot({
+    x <- faithful\$waiting
+    bins <- seq(min(x), max(x), length.out = input\$bins + 1)
+    hist(x, breaks = bins, col = "#28a745", border = "white",
+         xlab = "Waiting time to next eruption (mins)",
+         main = "Old Faithful — rendered offline by WebR")
+  })
+}
+
+shinyApp(ui, server)
+''';
+
+  /// Imports the embedded raw-source sample app.
+  Future<ShinyApp> importSampleRaw() =>
+      importRawSource({'app.R': _sampleAppR}, name: 'Raw R sample');
+
+  /// Stages raw Shiny source (text files: app.R, or ui.R + server.R, plus any
+  /// small text assets) as a shinylive app.json, resolves packages, and records
+  /// the library entry. The shared shinylive R engine runs it at launch.
+  Future<ShinyApp> importRawSource(
+    Map<String, String> textFiles, {
+    required String name,
+    String? sourceUri,
+  }) async {
+    if (!_looksLikeShinyApp(textFiles)) {
+      throw const FormatException(
+          'No app.R (or ui.R + server.R) found in the source.');
+    }
+    final id = _uuid.v4();
+    final appJson = _buildAppJson(textFiles);
+    await _staging.writeStagedFile(id, 'app.json', utf8.encode(appJson));
+
+    final resolution = PackageResolver.resolve(textFiles.values.join('\n'));
+    final app = ShinyApp(
+      id: id,
+      name: name,
+      sourceType: SourceType.rawSource,
+      resolutionState: resolution.state,
+      resolutionDetail: resolution.detail,
+      stagedPath: id,
+      sourceUri: sourceUri,
+      importedAt: DateTime.now(),
+    );
+    await _library.upsert(app);
+    return app;
+  }
+
+  bool _looksLikeShinyApp(Map<String, String> files) {
+    final names = files.keys.map((k) => k.toLowerCase()).toSet();
+    return names.contains('app.r') ||
+        (names.contains('ui.r') && names.contains('server.r'));
+  }
+
+  /// Builds a shinylive `app.json` manifest from text source files.
+  String _buildAppJson(Map<String, String> textFiles) {
+    final entries = textFiles.entries
+        .map((e) => {'name': e.key, 'content': e.value, 'type': 'text'})
+        .toList();
+    return jsonEncode(entries);
+  }
+
+  /// Deletes a library entry and its staged files.
+  Future<void> deleteApp(ShinyApp app) async {
+    if (app.stagedPath != null) await _staging.remove(app.stagedPath!);
+    await _library.delete(app.id);
+  }
+}
