@@ -50,3 +50,8 @@ fastlane/Appfile
 # The fetched runtimes are reproduced at build time from pinned upstream URLs,
 # so they should NOT be committed. Uncomment if you vendor them locally instead:
 # assets/runtimes/
+
+# ---- Vendored runtime binaries (fetched at build time, not committed) ----
+assets/shinylive-r/*.zip
+assets/samples/*.zip
+assets/webr/
