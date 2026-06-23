@@ -1,0 +1,1 @@
+Etabli Vitrine bundles WebR and shinylive-R to execute interactive Shiny applications entirely on your device, with no server and no network. Share apps in via the system share sheet. Ships with sample apps to get started.

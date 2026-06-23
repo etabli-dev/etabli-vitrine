@@ -1,0 +1,59 @@
+# F-Droid build recipe for Etabli Vitrine
+# Lives at the repo root so `fdroid build` / fdroiddata can consume it directly.
+#
+# RUNTIME ASSETS: this app bundles WebR, shinylive as open-source WebAssembly.
+# They are NOT compiled by this recipe; they are vendored as release artifacts of
+# their upstream open-source projects (see THIRD_PARTY.md for exact pinned versions,
+# source URLs and licenses). The `prebuild` step fetches them from their canonical
+# upstream release URLs so the scanner sees provenance rather than opaque blobs.
+# If the main-repo reviewer requires building them from source, see FDROID_NOTES.md
+# for the fallback (own-repo distribution via Binaries/AllowedAPKSigningKeys).
+
+Categories:
+  - Science & Education
+License: Apache-2.0
+AuthorName: Raban Heller
+SourceCode: https://github.com/etabli-dev/vitrine
+IssueTracker: https://github.com/etabli-dev/vitrine/issues
+Liberapay: rabanheller
+RepoType: git
+Repo: https://github.com/etabli-dev/vitrine.git
+
+Builds:
+  - versionName: "1.0"
+    versionCode: 100002        # arm64-v8a (primary). v7a=100001, x86_64=100004
+    commit: v1.0
+    subdir: .                  # pubspec.yaml is at repo root
+    submodules: true
+    srclibs:
+      - flutter@stable
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    rm:
+      - ios
+      - macos
+      - linux
+      - windows
+      - web
+    scandelete:
+      # build caches and anything not needed for the APK
+      - .dart_tool
+      - build
+    scanignore:
+      # vendored open-source WASM runtimes — provenance documented in THIRD_PARTY.md.
+      # scanignore (not scandelete) because the APK needs them at build time.
+      - assets/runtimes
+    prebuild:
+      # pin Flutter to the version pinned in CI, into the flutter srclib
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/release.yml)
+      - '[[ $flutterVersion ]] && git -C $$flutter$$ checkout -f $flutterVersion || true'
+      # fetch vendored runtimes from upstream open-source releases (provenance, not blobs)
+      - bash tool/fetch_runtimes.sh
+      # scan dart packages
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+
+AutoUpdateMode: Version v%v
+UpdateCheckMode: Tags
+CurrentVersion: "1.0"
+CurrentVersionCode: 100002
