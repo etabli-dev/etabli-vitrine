@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
@@ -36,17 +35,42 @@ class ImportController {
   final LibraryRepository _library;
   static const _uuid = Uuid();
 
-  static const String _sampleAsset = 'assets/samples/shinylive-sample.zip';
+  /// Imports the bundled sample app and returns its library entry. The app is
+  /// embedded as source and staged for the bundled shinylive R engine, so it
+  /// runs fully offline with no extra assets to ship.
+  Future<ShinyApp> importSample() => importRawSourceFiles(
+        {'app.R': Uint8List.fromList(utf8.encode(_sampleShinyliveAppR))},
+        name: 'Sample (shinylive)',
+        sourceUri: 'bundled:sample-shinylive',
+      );
 
-  /// Imports the bundled sample shinylive app and returns its library entry.
-  Future<ShinyApp> importSample() async {
-    final data = await rootBundle.load(_sampleAsset);
-    return importShinyliveZip(
-      data.buffer.asUint8List(),
-      name: 'Sample (shinylive)',
-      sourceUri: 'asset:$_sampleAsset',
-    );
-  }
+  static const String _sampleShinyliveAppR = '''library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Établi Vitrine — sample app"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("var", "Variable", choices = names(mtcars), selected = "mpg"),
+      sliderInput("bins", "Bins", min = 5, max = 30, value = 12)
+    ),
+    mainPanel(
+      plotOutput("hist"),
+      verbatimTextOutput("summary")
+    )
+  )
+)
+
+server <- function(input, output) {
+  output\$hist <- renderPlot({
+    hist(mtcars[[input\$var]], breaks = input\$bins,
+         col = "#28A745", border = "white",
+         main = input\$var, xlab = input\$var)
+  })
+  output\$summary <- renderPrint(summary(mtcars[[input\$var]]))
+}
+
+shinyApp(ui, server)
+''';
 
   /// Stages a self-contained shinylive bundle and records it in the library.
   /// Shinylive bundles ship their own runtime, so they are offline-ready.

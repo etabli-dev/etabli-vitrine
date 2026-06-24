@@ -24,14 +24,18 @@ app* et *Sample raw R app*.
 
 ![Feuille d'import — sources, dont les exemples intégrés](../_screens/0.1.0/02-import.png){width=320}
 
-## Exemples intégrés — note v0.1.0
+## Exemples intégrés
 
-La feuille d'import propose les exemples intégrés, mais en v0.1.0 le fichier de
-l'exemple est absent ; l'import échoue donc **proprement** (sans plantage) avec
-« Unable to load asset … does not exist or has empty data ». Une vraie application
-Shiny s'exécute néanmoins très bien si on l'importe depuis les fichiers ou une URL.
+Les deux exemples intégrés — *Sample (shinylive)* et *Sample raw R app* — s'importent
+d'une seule touche et s'exécutent hors ligne sur le moteur shinylive/WebR embarqué.
+Choisissez l'un ou l'autre dans la feuille d'import : il apparaît dans la vitrine avec
+un badge **READY** (« Imported. »), prêt à être lancé, sans réseau ni fichier à récupérer.
 
-![L'import de l'exemple échoue — fichier manquant en v0.1.0](../_screens/0.1.0/03-import-failed-asset.png){width=320}
+![Vitrine affichant « Sample (shinylive) » importé et READY](../_screens/0.1.0/05-sample-imported-ok.png){width=320}
+
+L'interface Shiny rendue attend que le moteur WebR termine son démarrage — quelques
+secondes sur un appareil réel — avant de s'afficher. La figure ci-dessus montre
+l'exemple importé et READY dans la vitrine.
 
 ## Réglages
 

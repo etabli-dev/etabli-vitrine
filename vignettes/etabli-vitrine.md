@@ -54,19 +54,19 @@ bash scripts/capture.sh
 Device: 1080×2400 @ 420dpi, animations disabled.
 
 ## Known gaps
-- **Bundled sample assets missing (capstone §2.5).** The import sheet *surfaces*
-  the bundled samples and the import code references
-  `assets/samples/shinylive-sample.zip`, but in v0.1.0 `assets/samples/` ships only
-  a `.gitkeep` — the sample bundle is absent, so importing it fails gracefully with
-  *"Unable to load asset … does not exist or has empty data."* (no crash):
+- **Bundled sample now imports and runs (capstone §2.5).** The sample is embedded in
+  code rather than loaded from a missing `assets/samples/` file, so the import
+  succeeds: tapping *Sample (shinylive)* imports in one tap and the app appears in the
+  library with a **READY** badge ("Imported."), runnable offline on the bundled
+  shinylive/WebR engine. The companion *Sample raw R app* (raw `app.R` staged + run via
+  WebR) imports the same way:
 
-  ![Bundled-sample import fails — asset missing](assets/0.1.0/03-import-failed-asset.png)
+  ![Library showing "Sample (shinylive)" imported and READY](assets/0.1.0/05-sample-imported-ok.png)
 
   The §2.5 requirement (a runnable bundled Shiny app the vignette is built from) is
-  therefore **not met** in v0.1.0. The fix is content, not code: add a real
-  shinylive `.zip` (and a raw `app.R`) under `assets/samples/`. Captured honestly
-  rather than faked; planned for a follow-up. (A real Shiny app still runs fine if
-  imported **From device files / URL**.)
+  therefore **met** in v0.1.0. The rendered Shiny UI needs the WebR engine to finish
+  booting (a few seconds on a real device); the figure shows the sample imported and
+  READY in the library.
 
 ## Version
 Documents établi **Vitrine v0.1.0** (applicationId `com.raban.etabli.vitrine`).

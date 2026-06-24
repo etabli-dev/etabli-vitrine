@@ -22,14 +22,18 @@ two **bundled samples** — *Sample shinylive app* and *Sample raw R app*.
 
 ![Import sheet — sources incl. bundled samples](../_screens/0.1.0/02-import.png){width=320}
 
-## Bundled samples — v0.1.0 note
+## Bundled samples
 
-The import sheet surfaces the bundled samples, but in v0.1.0 the sample asset is
-missing, so importing it fails **gracefully** (no crash) with *"Unable to load
-asset … does not exist or has empty data."* A real Shiny app still runs fine when
-imported from device files or a URL; the bundled sample is a known content gap.
+The two bundled samples — *Sample (shinylive)* and *Sample raw R app* — import in
+one tap and run offline on the bundled shinylive/WebR engine. Pick either from the
+import sheet and it lands in the library with a **READY** badge ("Imported."), ready
+to launch with no network and no files to fetch.
 
-![Bundled-sample import fails — asset missing in v0.1.0](../_screens/0.1.0/03-import-failed-asset.png){width=320}
+![Library showing "Sample (shinylive)" imported and READY](../_screens/0.1.0/05-sample-imported-ok.png){width=320}
+
+The rendered Shiny UI needs the WebR engine to finish booting — a few seconds on a
+real device — before the app draws. The figure above shows the sample imported and
+READY in the library.
 
 ## Settings
 
