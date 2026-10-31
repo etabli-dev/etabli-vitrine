@@ -3,30 +3,10 @@ title: "Erste Schritte"
 sidebar: de
 ---
 
-## Voraussetzungen
+Kompatible Shiny-Apps mit der lokalen R-Laufzeit importieren und ausführen: ZIP-Pakete oder app.R beziehungsweise ui.R und server.R. Fehlende Pakete werden angezeigt.
 
-- Ein Gerät mit iOS, Android oder Desktop.
-- Kein Server, kein Konto, keine Anmeldung.
+Diese Seite beschreibt den Quellstand vom Oktober 2026. Die Änderungen im Quellcode sind nicht Teil der Downloads älterer Entwicklungsreleases. Lokale Prüfungen ersetzen keine Geräte-, Live-Server- oder Store-Abnahme.
 
-## Einrichtung
+[Aktueller Funktionsumfang, Voraussetzungen und Befehle (Englisch)](../current-status.qmd)
 
-1. **Installieren.** Établi Vitrine ist in Entwicklung. Lade den aktuellen **Entwicklungs-Build (signierte APK)** über [GitHub Releases](https://github.com/etabli-dev/etabli-vitrine/releases) herunter und installiere ihn unter Android, oder erstelle einen Desktop-Build aus dem Repo. App Store, Google Play und F-Droid sind noch nicht verfügbar.
-2. **Öffnen.** Beim ersten Start entpackt die App die eingebetteten Laufzeiten (WebR und shinylive) und richtet einen lokalen HTTP-Loopback-Server mit den nötigen Headern für `SharedArrayBuffer` ein.
-3. **Beispiel-App starten.** In der Bibliothek liegt eine mitgelieferte Shiny-Beispiel-App; ein Tipp darauf startet sie.
-
-## Eigene Shiny-App importieren
-
-| Quelle | Vorgehen |
-|--------|----------|
-| **Datei** | Importieren → Datei-Picker → eine `.zip` (shinylive-Bündel) oder ein Ordner mit `app.R` (bzw. `ui.R` + `server.R`). |
-| **URL** | Importieren-Dialog → URL eines `.zip`-Archivs eintragen. |
-| **Teilen-Sheet** | Eine `.zip` aus einer anderen App teilen und Vitrine als Ziel wählen. |
-| **Roh-Quelltext** | Importieren-Dialog → „Roh-Quelltext" → R-Code einfügen; Vitrine baut intern ein shinylive-`app.json`. |
-
-Importierte Apps landen in der Bibliothek (dem „Schaufenster") und lassen sich von dort wieder starten oder löschen.
-
-## Hinweise
-
-- shinylive-Bündel sind eigenständig — alle benötigten R-Pakete sind im Bündel enthalten.
-- Bei Roh-Quellcode versucht Vitrine, fehlende Pakete zu erkennen und meldet ggf., welche nicht in der eingebetteten WebR-Distribution verfügbar sind.
-- Quelloffene WebAssembly-Laufzeiten (WebR, shinylive); Versionen und Quell-URLs siehe `THIRD_PARTY.md` im Repo.
+[README](https://github.com/etabli-dev/etabli-vitrine/blob/main/README.md) · [GitHub](https://github.com/etabli-dev/etabli-vitrine)

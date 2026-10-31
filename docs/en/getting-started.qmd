@@ -1,32 +1,12 @@
 ---
-title: "Getting Started"
+title: "Getting started"
 sidebar: en
 ---
 
-## Requirements
+Import and run compatible Shiny apps with the bundled local R runtime. Import ZIP bundles or app.R / ui.R + server.R; missing packages are reported.
 
-- An iOS, Android or desktop device.
-- No server, no account, no sign-in.
+This page describes the October 2026 source revision. These source changes are not part of older development release downloads. Local checks are distinct from device, live-service and store acceptance.
 
-## Setup
+[Current implementation, prerequisites and commands](../current-status.qmd)
 
-1. **Install.** Établi Vitrine is under development. Download the current **development build (signed APK)** from [GitHub Releases](https://github.com/etabli-dev/etabli-vitrine/releases) and install it on Android, or build for desktop from the repo. App Store, Google Play and F-Droid releases are not available yet.
-2. **Open.** On first launch the app unpacks the bundled runtimes (WebR and shinylive) and brings up a local HTTP loopback server with the headers WebR needs for `SharedArrayBuffer`.
-3. **Run the sample.** The library ships with a Shiny sample app; tap it to launch.
-
-## Importing your own Shiny app
-
-| Source | How |
-|--------|-----|
-| **File** | Import → file picker → either a `.zip` (shinylive bundle) or a folder with `app.R` (or `ui.R` + `server.R`). |
-| **URL** | Import dialog → enter the URL of a `.zip` archive. |
-| **Share sheet** | Share a `.zip` from another app and pick Vitrine as the target. |
-| **Raw source** | Import dialog → "Raw source" → paste R code; Vitrine builds an internal shinylive `app.json`. |
-
-Imported apps land in the library (the "display case") and can be relaunched or removed from there.
-
-## Notes
-
-- shinylive bundles are self-contained — all required R packages are inside the bundle.
-- For raw source, Vitrine attempts to detect missing packages and reports any that are not available in the bundled WebR distribution.
-- WebR and shinylive are open-source WebAssembly distributions; versions and source URLs in `THIRD_PARTY.md`.
+[README](https://github.com/etabli-dev/etabli-vitrine/blob/main/README.md) · [GitHub](https://github.com/etabli-dev/etabli-vitrine)

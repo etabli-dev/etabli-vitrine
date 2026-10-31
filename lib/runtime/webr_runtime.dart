@@ -3,13 +3,9 @@
 
 import 'dart:io';
 
-import 'package:archive/archive.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-
 import '../theme/coder_theme_vitrine_tokens.dart';
 import 'local_http_server.dart';
+import 'runtime_assets.dart';
 
 /// Manages the bundled, offline WebR runtime.
 ///
@@ -49,41 +45,19 @@ class WebRRuntime {
     _server = null;
   }
 
-  Future<Directory> _ensureExtracted() async {
-    final support = await getApplicationSupportDirectory();
-    final root = Directory(p.join(support.path, 'webr_runtime'));
-    final marker = File(p.join(root.path, '.webr_version'));
-
-    if (await marker.exists() &&
-        (await marker.readAsString()).trim() == webrVersion) {
-      return root;
-    }
-
-    if (await root.exists()) await root.delete(recursive: true);
-    await root.create(recursive: true);
-
-    final data = await rootBundle.load(_assetZip);
-    final archive = ZipDecoder().decodeBytes(data.buffer.asUint8List());
-    for (final entry in archive) {
-      final outPath = p.normalize(p.join(root.path, entry.name));
-      // Guard against path traversal in the archive.
-      if (!p.isWithin(root.path, outPath)) continue;
-      if (entry.isFile) {
-        final f = File(outPath);
-        await f.parent.create(recursive: true);
-        await f.writeAsBytes(entry.content as List<int>, flush: false);
-      } else {
-        await Directory(outPath).create(recursive: true);
-      }
-    }
-    await marker.writeAsString(webrVersion);
-    return root;
-  }
+  final _assets = RuntimeAssets(
+    name: 'webr_runtime',
+    version: '$webrVersion-prepared-1',
+    asset: _assetZip,
+    requiredFiles: ['webr.mjs', 'webr.js', 'R.wasm'],
+  );
+  Future<Directory> _ensureExtracted() => _assets.ensureReady();
 
   /// The runner document: boots WebR from this same origin, prints the R
   /// banner, and exposes a minimal REPL. Output is mirrored to Flutter via the
   /// `webr` JS handler.
-  static const String _indexHtml = '''<!doctype html>
+  static const String _indexHtml =
+      '''<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">

@@ -3,48 +3,10 @@ title: "Établi Vitrine"
 sidebar: en
 ---
 
-<img src="../_icons/icon-vitrine.svg" alt="" width="80" align="right" style="margin:0 0 1rem 1rem;">
+Import and run compatible Shiny apps with the bundled local R runtime. Import ZIP bundles or app.R / ui.R + server.R; missing packages are reported.
 
-<span class="etabli-badge">Flagship runtime</span>
+This page describes the October 2026 source revision. These source changes are not part of older development release downloads. Local checks are distinct from device, live-service and store acceptance.
 
-> Run interactive Shiny apps fully on-device.
+[Current implementation, prerequisites and commands](../current-status.qmd)
 
-Établi Vitrine bundles WebR and shinylive-R and runs interactive Shiny applications fully locally — without a server, without a network. Apps can be imported from the library, the file system, the system share sheet, or a URL. Statistical power analysis is delivered as a bundled Shiny app inside Vitrine; there is no separate power-analysis app anymore.
-
-![Vitrine — library on Android](../_screens/0.1.0/01-library.png){width=320}
-
-## Who benefits
-
-Authors of Shiny apps who want to demo without standing up a server — at conferences, in classrooms, to colleagues without an R install. And anyone who needs statistical tools (e.g. power calculations) mobile and offline.
-
-## Platforms
-
-| Platform | Status |
-|----------|--------|
-| iOS      | ✓      |
-| Android  | ✓      |
-| macOS    | ✓      |
-| Linux    | ✓      |
-| Windows  | ✓      |
-
-## Privacy
-
-No analytics, no third-party SDKs. The app runs fully offline; imported Shiny apps run inside a locally hosted WebAssembly sandbox. Nothing leaves the device.
-
-## Installation
-
-Établi Vitrine is **under active development**. There are no App Store, Google Play or F-Droid releases yet.
-
-| Channel | Status |
-|---------|--------|
-| Android (APK) | **Development build** via [GitHub Releases](https://github.com/etabli-dev/etabli-vitrine/releases) |
-| App Store (iOS) | planned — not yet available |
-| Google Play | planned — not yet available |
-| F-Droid | planned — not yet available |
-| Desktop (macOS, Windows, Linux) | build from source |
-
-Details: see [Getting Started](getting-started.qmd).
-
-## Support
-
-If you find the app useful: [Liberapay](https://liberapay.com/rabanheller/).
+[README](https://github.com/etabli-dev/etabli-vitrine/blob/main/README.md) · [GitHub](https://github.com/etabli-dev/etabli-vitrine)

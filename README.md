@@ -2,9 +2,9 @@
 
 > Run interactive Shiny apps entirely on-device.
 
-`iOS` `Android` `macOS` `Windows` `Linux` · Apache-2.0 · Part of the [Établi Suite](https://github.com/etabli-dev)
+`Android` · iOS and desktop runners require platform verification · Apache-2.0 · Part of the [Établi Suite](https://github.com/etabli-dev)
 
-Établi Vitrine bundles WebR and shinylive-R to execute interactive Shiny applications entirely on your device, with no server and no network. Share apps in via the system share sheet. Ships with sample apps to get started.
+Établi Vitrine bundles WebR and shinylive-R to execute interactive Shiny applications entirely on your device, without an external server for compatible, fully bundled apps. Imported apps may require additional packages or network access. Share apps in via the system share sheet. Ships with sample apps to get started.
 
 ## Availability
 
@@ -14,11 +14,11 @@
 - **App Store (iOS):** planned — not yet available.
 - **Google Play:** planned — not yet available.
 - **F-Droid:** planned — not yet available.
-- **Desktop (macOS, Windows, Linux):** build from source.
+- **Desktop runners:** experimental; desktop builds and embedded-WebView support have not been verified in this refinement.
 
 ## Privacy
 
-No analytics. No third-party SDKs. No accounts. Credentials, where needed, live only in the platform secure store (iOS Keychain / Android EncryptedSharedPreferences). This app is fully offline.
+The bundled examples and runtimes work without an external connection. No analytics or account service is configured. Imported code runs with WebView capabilities and can request network resources; it is not an isolated sandbox for untrusted programs. Workspaces and imported sources are stored locally and may be included in platform backups. Dependencies and runtime notices are listed in THIRD_PARTY.md.
 
 ## Repository layout
 
@@ -27,7 +27,7 @@ lib/         app, features, data, theme, widgets
 android/     Android runner
 ios/         iOS runner
 macos/ windows/ linux/    desktop runners
-.fdroid.yml  F-Droid build recipe (main-repo submission)
+.fdroid.yml  disabled F-Droid draft; see FDROID_NOTES.md
 fastlane/    store + F-Droid listing metadata
 ```
 
@@ -46,3 +46,25 @@ Dart 3.12+, flutter_riverpod, go_router, drift, flutter_inappwebview
 Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
 
 Copyright 2026 R. Heller.
+
+## Reproduce the October 2026 verification
+
+Prerequisites: Flutter **3.47.9** (Dart 3.13.7), Python 3.9+, Node 22+, JDK 17, Android SDK platform 36 and build-tools 35.0.0. Set `JAVA_HOME` and `ANDROID_HOME`. Xcode is additionally required for iOS builds.
+
+```sh
+python3 tool/test_fetch_runtimes.py
+bash tool/fetch_runtimes.sh
+flutter pub get --enforce-lockfile
+flutter analyze
+flutter test
+npm --prefix tool ci
+(cd tool && npx playwright install chromium)
+npm --prefix tool test
+flutter run
+# Or build an Android test APK:
+flutter build apk --debug --target-platform android-arm64
+```
+
+The first runtime preparation needs network access and roughly 500 MB of upstream downloads. It caches verified inputs under `~/.cache/etabli-runtimes`; use `--cache-dir PATH --offline` for a populated offline cache. Runtime tests boot the actual bundled code in Chromium, blocking external requests. This supplements Flutter tests but does not replace device/WebView testing.
+
+Current repairs, observed checks and remaining distribution gates are recorded in [the refinement record](docs/refinement-2026-10.md). Runtime redistribution requirements are in [THIRD_PARTY.md](THIRD_PARTY.md).

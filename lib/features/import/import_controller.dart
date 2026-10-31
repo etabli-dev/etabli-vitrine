@@ -6,7 +6,6 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
 
@@ -17,6 +16,7 @@ import '../../data/repositories/library_repository.dart';
 import '../../runtime/staging_service.dart';
 import '../../theme/coder_theme_vitrine_tokens.dart';
 import 'import_router.dart';
+import 'download.dart';
 import 'package_resolver.dart';
 
 final importControllerProvider = Provider<ImportController>(
@@ -39,10 +39,10 @@ class ImportController {
   /// embedded as source and staged for the bundled shinylive R engine, so it
   /// runs fully offline with no extra assets to ship.
   Future<ShinyApp> importSample() => importRawSourceFiles(
-        {'app.R': Uint8List.fromList(utf8.encode(_sampleShinyliveAppR))},
-        name: 'Sample (shinylive)',
-        sourceUri: 'bundled:sample-shinylive',
-      );
+    {'app.R': Uint8List.fromList(utf8.encode(_sampleShinyliveAppR))},
+    name: 'Sample (shinylive)',
+    sourceUri: 'bundled:sample-shinylive',
+  );
 
   static const String _sampleShinyliveAppR = '''library(shiny)
 
@@ -79,6 +79,9 @@ shinyApp(ui, server)
     required String name,
     String? sourceUri,
   }) async {
+    if (zipBytes.length > maxImportBytes) {
+      throw const FormatException('Import exceeds the size limit.');
+    }
     final id = _uuid.v4();
     await _staging.stageZip(zipBytes, id);
     final app = ShinyApp(
@@ -90,7 +93,7 @@ shinyApp(ui, server)
       sourceUri: sourceUri,
       importedAt: DateTime.now(),
     );
-    await _library.upsert(app);
+    await _record(app);
     return app;
   }
 
@@ -116,6 +119,7 @@ shinyApp(ui, server)
     } catch (_) {
       throw const FormatException('Not a valid zip archive.');
     }
+    StagingService.validateArchive(archive);
     final names = archive.where((e) => e.isFile).map((e) => e.name);
     final decision = ImportRouter.classify(names);
 
@@ -132,7 +136,7 @@ shinyApp(ui, server)
           sourceUri: sourceUri,
           importedAt: DateTime.now(),
         );
-        await _library.upsert(app);
+        await _record(app);
         return app;
 
       case ImportKind.rawSource:
@@ -149,20 +153,18 @@ shinyApp(ui, server)
 
       case ImportKind.unknown:
         throw const FormatException(
-            'Not a recognized Shiny app or shinylive bundle.');
+          'Not a recognized Shiny app or shinylive bundle.',
+        );
     }
   }
 
   /// Downloads a `.zip` from [url] and imports it.
   Future<ShinyApp> importUrl(String url, {String? name}) async {
     final uri = Uri.parse(url);
-    final resp = await http.get(uri);
-    if (resp.statusCode != 200) {
-      throw FormatException('Download failed (HTTP ${resp.statusCode}).');
-    }
+    final bytes = await downloadZip(uri, maxBytes: maxImportBytes);
     final fallbackName = p.basenameWithoutExtension(uri.path);
     return importZipBytes(
-      resp.bodyBytes,
+      bytes,
       name: name ?? (fallbackName.isEmpty ? 'Imported app' : fallbackName),
       sourceUri: url,
     );
@@ -170,7 +172,8 @@ shinyApp(ui, server)
 
   // ── Raw Shiny source (Milestone 4) ──────────────────────────────────────
 
-  static const String _sampleAppR = '''library(shiny)
+  static const String _sampleAppR =
+      '''library(shiny)
 
 ui <- fluidPage(
   titlePanel("Établi Vitrine — Raw R sample"),
@@ -196,10 +199,9 @@ shinyApp(ui, server)
 ''';
 
   /// Imports the embedded raw-source sample app.
-  Future<ShinyApp> importSampleRaw() => importRawSourceFiles(
-        {'app.R': Uint8List.fromList(utf8.encode(_sampleAppR))},
-        name: 'Raw R sample',
-      );
+  Future<ShinyApp> importSampleRaw() => importRawSourceFiles({
+    'app.R': Uint8List.fromList(utf8.encode(_sampleAppR)),
+  }, name: 'Raw R sample');
 
   /// Stages raw Shiny source as a shinylive `app.json`, resolves packages, and
   /// records the library entry. Text files (.R, .csv, …) become `type:text`
@@ -210,23 +212,41 @@ shinyApp(ui, server)
     required String name,
     String? sourceUri,
   }) async {
+    var total = 0;
+    for (final entry in files.entries) {
+      StagingService.validateRelativePath(entry.key);
+      total += entry.value.length;
+    }
+    if (total > maxImportBytes ||
+        files.length > StagingService.maxArchiveFiles) {
+      throw const FormatException('Source files exceed the import limit.');
+    }
     if (!_looksLikeShinyApp(files.keys)) {
       throw const FormatException(
-          'No app.R (or ui.R + server.R) found in the source.');
+        'No app.R (or ui.R + server.R) found in the source.',
+      );
     }
     final id = _uuid.v4();
     final textBlob = StringBuffer();
     final entries = <Map<String, String>>[];
     for (final e in files.entries) {
       if (ImportRouter.isTextSource(e.key)) {
-        final content = utf8.decode(e.value, allowMalformed: true);
+        final content = utf8.decode(e.value);
         textBlob.writeln(content);
         entries.add({'name': e.key, 'content': content, 'type': 'text'});
       } else {
-        entries.add({'name': e.key, 'content': base64Encode(e.value), 'type': 'binary'});
+        entries.add({
+          'name': e.key,
+          'content': base64Encode(e.value),
+          'type': 'binary',
+        });
       }
     }
-    await _staging.writeStagedFile(id, 'app.json', utf8.encode(jsonEncode(entries)));
+    await _staging.writeStagedFile(
+      id,
+      'app.json',
+      utf8.encode(jsonEncode(entries)),
+    );
 
     final resolution = PackageResolver.resolve(textBlob.toString());
     final app = ShinyApp(
@@ -239,19 +259,29 @@ shinyApp(ui, server)
       sourceUri: sourceUri,
       importedAt: DateTime.now(),
     );
-    await _library.upsert(app);
+    await _record(app);
     return app;
   }
 
+  Future<void> _record(ShinyApp app) async {
+    try {
+      await _library.upsert(app);
+    } catch (_) {
+      // These are newly generated staging files; the imported source is untouched.
+      if (app.stagedPath != null) await _staging.remove(app.stagedPath!);
+      rethrow;
+    }
+  }
+
   bool _looksLikeShinyApp(Iterable<String> fileNames) {
-    final names = fileNames.map((k) => p.basename(k).toLowerCase()).toSet();
+    final names = fileNames.map((k) => k.toLowerCase()).toSet();
     return names.contains('app.r') ||
         (names.contains('ui.r') && names.contains('server.r'));
   }
 
   /// Deletes a library entry and its staged files.
   Future<void> deleteApp(ShinyApp app) async {
-    if (app.stagedPath != null) await _staging.remove(app.stagedPath!);
     await _library.delete(app.id);
+    if (app.stagedPath != null) await _staging.remove(app.stagedPath!);
   }
 }

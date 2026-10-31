@@ -24,7 +24,8 @@ class ShinyliveRunnerPage extends ConsumerStatefulWidget {
   final ShinyApp app;
 
   @override
-  ConsumerState<ShinyliveRunnerPage> createState() => _ShinyliveRunnerPageState();
+  ConsumerState<ShinyliveRunnerPage> createState() =>
+      _ShinyliveRunnerPageState();
 }
 
 class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
@@ -39,8 +40,9 @@ class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
   }
 
   Future<void> _start() async {
+    LocalHttpServer? server;
     try {
-      final server = await _buildServer();
+      server = await _buildServer();
       final uri = await server.start();
       await ref
           .read(libraryRepositoryProvider)
@@ -54,6 +56,9 @@ class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
         _baseUri = uri;
       });
     } catch (e) {
+      // Ownership has not yet transferred to the widget. A metadata failure
+      // after binding must still release the listening socket.
+      await server?.dispose();
       if (mounted) setState(() => _error = '$e');
     }
   }
@@ -67,8 +72,9 @@ class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
     final staging = ref.read(stagingServiceProvider);
     if (widget.app.sourceType == SourceType.rawSource) {
       final engineDir = await ref.read(shinyliveEngineProvider).ensureReady();
-      final appJsonFile =
-          File('${(await staging.dirFor(widget.app.stagedPath!)).path}/app.json');
+      final appJsonFile = File(
+        '${(await staging.dirFor(widget.app.stagedPath!)).path}/app.json',
+      );
       if (!await appJsonFile.exists()) {
         throw StateError('Staged app.json is missing — re-import this app.');
       }
@@ -77,11 +83,7 @@ class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
       return LocalHttpServer(
         rootDir: engineDir,
         crossOriginIsolated: false,
-        virtualRoutes: {
-          '/': index,
-          '/index.html': index,
-          '/app.json': appJson,
-        },
+        virtualRoutes: {'/': index, '/index.html': index, '/app.json': appJson},
       );
     }
 
@@ -112,9 +114,11 @@ class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(VitrineTokens.space5),
-          child: Text('Failed to launch:\n\n$_error',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium),
+          child: Text(
+            'Failed to launch:\n\n$_error',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
         ),
       );
     }
@@ -122,7 +126,9 @@ class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
       return const Center(child: CircularProgressIndicator());
     }
     return InAppWebView(
-      initialUrlRequest: URLRequest(url: WebUri.uri(_baseUri!.resolve('index.html'))),
+      initialUrlRequest: URLRequest(
+        url: WebUri.uri(_baseUri!.resolve('index.html')),
+      ),
       initialSettings: InAppWebViewSettings(
         javaScriptEnabled: true,
         isInspectable: true,

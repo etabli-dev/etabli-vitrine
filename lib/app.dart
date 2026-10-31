@@ -19,11 +19,26 @@ class VitrineApp extends ConsumerStatefulWidget {
 
 class _VitrineAppState extends ConsumerState<VitrineApp> {
   ShareImportListener? _shareListener;
+  final _messenger = GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
     super.initState();
-    _shareListener = ShareImportListener(ref.read(importControllerProvider))..start();
+    _shareListener = ShareImportListener(
+      ref.read(importControllerProvider),
+      onError: (message) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _messenger.currentState?.showSnackBar(
+              SnackBar(
+                content: Text(message),
+                duration: const Duration(seconds: 10),
+              ),
+            );
+          }
+        });
+      },
+    )..start();
   }
 
   @override
@@ -37,6 +52,7 @@ class _VitrineAppState extends ConsumerState<VitrineApp> {
     final mode = ref.watch(themeModeProvider);
     return MaterialApp.router(
       title: 'Établi Vitrine',
+      scaffoldMessengerKey: _messenger,
       debugShowCheckedModeBanner: false,
       theme: VitrineTheme.light(),
       darkTheme: VitrineTheme.dark(),

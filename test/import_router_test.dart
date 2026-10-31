@@ -8,7 +8,10 @@ void main() {
   group('ImportRouter.classify', () {
     test('shinylive bundle at root', () {
       final d = ImportRouter.classify([
-        'index.html', 'app.json', 'shinylive/shinylive.js', 'shinylive-sw.js',
+        'index.html',
+        'app.json',
+        'shinylive/shinylive.js',
+        'shinylive-sw.js',
       ]);
       expect(d.kind, ImportKind.shinyliveBundle);
       expect(d.rootPrefix, '');
@@ -16,7 +19,9 @@ void main() {
 
     test('shinylive bundle under a wrapping folder', () {
       final d = ImportRouter.classify([
-        'myapp/index.html', 'myapp/app.json', 'myapp/shinylive/shinylive.js',
+        'myapp/index.html',
+        'myapp/app.json',
+        'myapp/shinylive/shinylive.js',
       ]);
       expect(d.kind, ImportKind.shinyliveBundle);
       expect(d.rootPrefix, 'myapp/');
@@ -29,7 +34,11 @@ void main() {
     });
 
     test('raw ui.R + server.R under a folder', () {
-      final d = ImportRouter.classify(['proj/ui.R', 'proj/server.R', 'proj/www/style.css']);
+      final d = ImportRouter.classify([
+        'proj/ui.R',
+        'proj/server.R',
+        'proj/www/style.css',
+      ]);
       expect(d.kind, ImportKind.rawSource);
       expect(d.rootPrefix, 'proj/');
     });
@@ -46,7 +55,9 @@ void main() {
 
     test('prefers shinylive bundle when both markers exist', () {
       final d = ImportRouter.classify([
-        'index.html', 'shinylive/x.js', 'app.R',
+        'index.html',
+        'shinylive/x.js',
+        'app.R',
       ]);
       expect(d.kind, ImportKind.shinyliveBundle);
     });

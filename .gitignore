@@ -55,3 +55,8 @@ fastlane/Appfile
 assets/shinylive-r/*.zip
 assets/samples/*.zip
 assets/webr/
+
+# Reproducible inputs and receipts from tool/fetch_runtimes.sh
+/tool/runtimes.prepared.json
+/tool/node_modules/
+/tool/test-results/

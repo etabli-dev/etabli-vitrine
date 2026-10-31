@@ -3,61 +3,18 @@ title: "Funktionen"
 sidebar: de
 ---
 
-Ein bebilderter Rundgang durch Établi Vitrine v0.1.0 — die Vitrine, die
-Shiny-Apps offline über shinylive + WebR ausführt. Jede Abbildung ist ein echter
-Screenshot des v0.1.0-Builds auf einem Android-Gerät.
+Kompatible Shiny-Apps mit der lokalen R-Laufzeit importieren und ausführen: ZIP-Pakete oder app.R beziehungsweise ui.R und server.R. Fehlende Pakete werden angezeigt.
 
-## Die Vitrine
+Diese Seite beschreibt den Quellstand vom Oktober 2026. Die Änderungen sind unveröffentlicht und nicht Teil älterer Entwicklungsreleases. Lokale Prüfungen ersetzen keine Geräte-, Live-Server- oder Store-Abnahme.
 
-Die Vitrine listet die importierten Shiny-Apps, jede mit einem Tipp offline
-ausführbar. Frisch installiert ist sie leer und verweist auf **+ Import**.
+[Current status / Aktueller Stand / État actuel](../current-status.qmd)
+
+Historische Bildschirmfotos aus v0.1.0; sie belegen keine Prüfung des aktuellen Quellstands.
 
 ![Vitrine — leere Vitrine](../_screens/0.1.0/01-library.png){width=320}
 
-## Eine Shiny-App importieren
-
-**+ Import** öffnet ein Menü mit vier Quellen: **Aus Gerätedateien** (ein
-shinylive-`.zip` oder `app.R` / `ui.R` + `server.R`), **Aus URL** (ein `.zip`
-laden) und zwei **mitgelieferte Beispiele** — *Sample shinylive app* und *Sample
-raw R app*.
-
 ![Import-Menü — Quellen inkl. mitgelieferter Beispiele](../_screens/0.1.0/02-import.png){width=320}
-
-## Mitgelieferte Beispiele
-
-Die beiden mitgelieferten Beispiele — *Sample (shinylive)* und *Sample raw R app* —
-lassen sich mit einem Tipp importieren und laufen offline auf der mitgelieferten
-shinylive/WebR-Engine. Wählt eines im Import-Menü, und es erscheint in der Vitrine mit
-einem **READY**-Abzeichen („Imported."), startbereit, ohne Netzwerk und ohne nachzuladende Dateien.
 
 ![Vitrine mit importiertem und READY-Beispiel „Sample (shinylive)"](../_screens/0.1.0/05-sample-imported-ok.png){width=320}
 
-Die gerenderte Shiny-Oberfläche wartet, bis die WebR-Engine fertig gestartet ist —
-ein paar Sekunden auf einem echten Gerät —, bevor die App erscheint. Die Abbildung
-oben zeigt das Beispiel importiert und READY in der Vitrine.
-
-## Einstellungen
-
-Die Einstellungen umfassen das Thema (hell / dunkel / System) und
-Laufzeit-Einstellungen.
-
 ![Einstellungen](../_screens/0.1.0/04-settings.png){width=320}
-
-## Laufzeit
-
-| Komponente | Rolle |
-|------------|-------|
-| **WebR** | R-Laufzeit als WebAssembly. |
-| **shinylive** | Shiny-Laufzeit, in einer WebView ausführbar. |
-| **Lokaler HTTP-Server** | liefert Dateien mit den COOP/COEP-Headern, die WebR braucht. |
-
-## Offline-Garantie
-
-Apps laufen vollständig in der lokalen WebAssembly-Sandbox. Die einzige ausgehende
-Anfrage entsteht, wenn du bewusst eine App per URL importierst.
-
-## Bezug
-
-Vorerst nur Android — ein **Entwicklungs-Build (signierte APK)** über
-[GitHub Releases](https://github.com/etabli-dev/etabli-vitrine/releases/tag/v0.1.0).
-App Store, Google Play und F-Droid sind geplant, aber noch nicht verfügbar.

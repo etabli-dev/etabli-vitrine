@@ -36,10 +36,13 @@ class ImportRouter {
     for (final n in names) {
       if (p.basename(n) != 'index.html') continue;
       final dir = _dir(n);
-      final hasEngine = names.any((m) =>
-          m.startsWith('${dir}shinylive/') || m == '${dir}app.json');
+      final hasEngine = names.any(
+        (m) => m.startsWith('${dir}shinylive/') || m == '${dir}app.json',
+      );
       if (hasEngine) {
-        if (bundleRoot == null || dir.length < bundleRoot.length) bundleRoot = dir;
+        if (bundleRoot == null || dir.length < bundleRoot.length) {
+          bundleRoot = dir;
+        }
       }
     }
     if (bundleRoot != null) {
@@ -52,8 +55,11 @@ class ImportRouter {
       final base = p.basename(n).toLowerCase();
       final dir = _dir(n);
       final isApp = base == 'app.r';
-      final isPair = base == 'ui.r' &&
-          names.any((m) => _dir(m) == dir && p.basename(m).toLowerCase() == 'server.r');
+      final isPair =
+          base == 'ui.r' &&
+          names.any(
+            (m) => _dir(m) == dir && p.basename(m).toLowerCase() == 'server.r',
+          );
       if (isApp || isPair) {
         if (rawRoot == null || dir.length < rawRoot.length) rawRoot = dir;
       }
@@ -75,8 +81,21 @@ class ImportRouter {
   static bool isTextSource(String name) {
     final ext = p.extension(name).toLowerCase();
     return const {
-      '.r', '.rmd', '.qmd', '.csv', '.txt', '.json', '.html', '.htm', '.css',
-      '.js', '.md', '.svg', '.tsv', '.yaml', '.yml',
+      '.r',
+      '.rmd',
+      '.qmd',
+      '.csv',
+      '.txt',
+      '.json',
+      '.html',
+      '.htm',
+      '.css',
+      '.js',
+      '.md',
+      '.svg',
+      '.tsv',
+      '.yaml',
+      '.yml',
     }.contains(ext);
   }
 }

@@ -27,19 +27,63 @@ class PackageResolution {
 class PackageResolver {
   /// Packages present in the bundled shinylive R library image (offline-ready).
   static const Set<String> bundled = {
-    'shiny', 'httpuv', 'R6', 'Rcpp', 'base64enc', 'bslib', 'cachem', 'cli',
-    'codetools', 'colorspace', 'commonmark', 'crayon', 'digest', 'ellipsis',
-    'fastmap', 'fontawesome', 'fs', 'glue', 'htmltools', 'jquerylib',
-    'jsonlite', 'later', 'lifecycle', 'magrittr', 'memoise', 'mime', 'munsell',
-    'otel', 'promises', 'rappdirs', 'renv', 'rlang', 'sass', 'sourcetools',
-    'withr', 'xtable',
+    'shiny',
+    'httpuv',
+    'R6',
+    'Rcpp',
+    'base64enc',
+    'bslib',
+    'cachem',
+    'cli',
+    'codetools',
+    'colorspace',
+    'commonmark',
+    'crayon',
+    'digest',
+    'ellipsis',
+    'fastmap',
+    'fontawesome',
+    'fs',
+    'glue',
+    'htmltools',
+    'jquerylib',
+    'jsonlite',
+    'later',
+    'lifecycle',
+    'magrittr',
+    'memoise',
+    'mime',
+    'munsell',
+    'otel',
+    'promises',
+    'rappdirs',
+    'renv',
+    'rlang',
+    'sass',
+    'sourcetools',
+    'withr',
+    'xtable',
   };
 
   /// Base + recommended packages shipped inside WebR itself.
   static const Set<String> base = {
-    'base', 'compiler', 'datasets', 'grDevices', 'graphics', 'grid', 'methods',
-    'parallel', 'splines', 'stats', 'stats4', 'tcltk', 'tools', 'utils',
-    'MASS', 'Matrix', 'lattice',
+    'base',
+    'compiler',
+    'datasets',
+    'grDevices',
+    'graphics',
+    'grid',
+    'methods',
+    'parallel',
+    'splines',
+    'stats',
+    'stats4',
+    'tcltk',
+    'tools',
+    'utils',
+    'MASS',
+    'Matrix',
+    'lattice',
   };
 
   static final RegExp _libCall = RegExp(
@@ -79,7 +123,8 @@ class PackageResolver {
       required_: required_,
       missing: missing,
       state: ResolutionState.warnings,
-      detail: 'Not bundled (needs a connection at launch): '
+      detail:
+          'Not bundled (needs a connection at launch): '
           '${(missing.toList()..sort()).join(', ')}',
     );
   }

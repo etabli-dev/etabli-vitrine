@@ -21,8 +21,7 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(VitrineTokens.space4),
         children: [
-          Text('APPEARANCE',
-              style: Theme.of(context).textTheme.labelSmall),
+          Text('APPEARANCE', style: Theme.of(context).textTheme.labelSmall),
           const SizedBox(height: VitrineTokens.space3),
           BorderedCard(
             padding: const EdgeInsets.all(VitrineTokens.space2),
@@ -38,9 +37,12 @@ class SettingsScreen extends ConsumerWidget {
                       value: m,
                       activeColor: VitrineTokens.accent,
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: VitrineTokens.space2),
-                      title: Text(_label(m),
-                          style: Theme.of(context).textTheme.bodyMedium),
+                        horizontal: VitrineTokens.space2,
+                      ),
+                      title: Text(
+                        _label(m),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ),
                 ],
               ),
@@ -59,16 +61,22 @@ class SettingsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('WebR Console',
-                          style: Theme.of(context).textTheme.bodyMedium),
+                      Text(
+                        'WebR Console',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                       const SizedBox(height: VitrineTokens.space1),
-                      Text('Offline R ${WebRRuntime.webrVersion} REPL — boot test',
-                          style: Theme.of(context).textTheme.bodySmall),
+                      Text(
+                        'Offline R ${WebRRuntime.webrVersion} REPL — boot test',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right,
-                    color: Theme.of(context).textTheme.bodySmall?.color),
+                Icon(
+                  Icons.chevron_right,
+                  color: Theme.of(context).textTheme.bodySmall?.color,
+                ),
               ],
             ),
           ),
@@ -79,11 +87,19 @@ class SettingsScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Établi Vitrine',
-                    style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  'Établi Vitrine',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: VitrineTokens.space1),
-                Text('Offline Shiny app runner.',
-                    style: Theme.of(context).textTheme.bodySmall),
+                Text(
+                  'Offline Shiny app runner.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                TextButton(
+                  onPressed: () => showLicensePage(context: context),
+                  child: const Text('Open-source licenses'),
+                ),
               ],
             ),
           ),
@@ -93,8 +109,8 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   String _label(ThemeMode m) => switch (m) {
-        ThemeMode.system => 'Auto (follow system)',
-        ThemeMode.light => 'Light',
-        ThemeMode.dark => 'Dark',
-      };
+    ThemeMode.system => 'Auto (follow system)',
+    ThemeMode.light => 'Light',
+    ThemeMode.dark => 'Dark',
+  };
 }

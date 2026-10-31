@@ -3,13 +3,12 @@
 
 import 'dart:io';
 
-import 'package:archive/archive.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+import 'runtime_assets.dart';
 
-final shinyliveEngineProvider = Provider<ShinyliveEngine>((_) => ShinyliveEngine());
+final shinyliveEngineProvider = Provider<ShinyliveEngine>(
+  (_) => ShinyliveEngine(),
+);
 
 /// The bundled shinylive **R** runtime engine (WebR 0.6.0 + the shiny library
 /// image + the engine JS/service-worker). Raw Shiny source is run by wrapping
@@ -20,38 +19,19 @@ class ShinyliveEngine {
   static const String version = '0.10.12';
   static const String _assetZip = 'assets/shinylive-r/engine.zip';
 
-  Directory? _dir;
+  final _assets = RuntimeAssets(
+    name: 'shinylive_r_engine',
+    version: '$version-prepared-1',
+    asset: _assetZip,
+    requiredFiles: [
+      'shinylive-sw.js',
+      'shinylive/shinylive.js',
+      'shinylive/webr/webr.mjs',
+      'shinylive/webr/library.data.gz',
+    ],
+  );
 
-  /// Extracts the engine once to app-support; returns its directory.
-  Future<Directory> ensureReady() async {
-    if (_dir != null) return _dir!;
-    final support = await getApplicationSupportDirectory();
-    final root = Directory(p.join(support.path, 'shinylive_r_engine'));
-    final marker = File(p.join(root.path, '.engine_version'));
-
-    if (await marker.exists() &&
-        (await marker.readAsString()).trim() == version) {
-      return _dir = root;
-    }
-    if (await root.exists()) await root.delete(recursive: true);
-    await root.create(recursive: true);
-
-    final data = await rootBundle.load(_assetZip);
-    final archive = ZipDecoder().decodeBytes(data.buffer.asUint8List());
-    for (final entry in archive) {
-      final outPath = p.normalize(p.join(root.path, entry.name));
-      if (!p.isWithin(root.path, outPath)) continue;
-      if (entry.isFile) {
-        final f = File(outPath);
-        await f.parent.create(recursive: true);
-        await f.writeAsBytes(entry.content as List<int>);
-      } else {
-        await Directory(outPath).create(recursive: true);
-      }
-    }
-    await marker.writeAsString(version);
-    return _dir = root;
-  }
+  Future<Directory> ensureReady() => _assets.ensureReady();
 
   /// The `index.html` that boots the shinylive R engine for a served app.json.
   static String indexHtml() => '''<!doctype html>

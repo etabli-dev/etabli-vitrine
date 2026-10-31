@@ -3,62 +3,18 @@ title: "Fonctionnalités"
 sidebar: fr
 ---
 
-Une visite guidée, capture par capture, d'Établi Vitrine v0.1.0 — la vitrine qui
-exécute des applications Shiny hors ligne via shinylive + WebR. Chaque figure est
-une vraie capture d'écran de la version v0.1.0 sur un appareil Android.
+Importer et exécuter des applications Shiny compatibles avec le moteur R local : archives ZIP ou app.R, ou ui.R avec server.R. Les paquets manquants sont signalés.
 
-## La vitrine
+Cette page décrit les sources d’octobre 2026. Ces modifications ne sont pas publiées et ne figurent pas dans les anciennes versions de développement. Les contrôles locaux ne remplacent pas la validation sur appareil, serveur réel ou boutique.
 
-La vitrine liste les applications Shiny que vous avez importées, chacune
-exécutable hors ligne d'une seule touche. À l'installation, elle est vide et
-invite à **+ Importer**.
+[Current status / Aktueller Stand / État actuel](../current-status.qmd)
+
+Captures historiques de v0.1.0 ; elles ne constituent pas une validation de la version actuelle.
 
 ![Vitrine — vitrine vide](../_screens/0.1.0/01-library.png){width=320}
 
-## Importer une application Shiny
-
-**+ Importer** ouvre une feuille avec quatre sources : **Depuis les fichiers de
-l'appareil** (un `.zip` shinylive, ou `app.R` / `ui.R` + `server.R`), **Depuis une
-URL** (télécharger un `.zip`), et deux **exemples intégrés** — *Sample shinylive
-app* et *Sample raw R app*.
-
 ![Feuille d'import — sources, dont les exemples intégrés](../_screens/0.1.0/02-import.png){width=320}
-
-## Exemples intégrés
-
-Les deux exemples intégrés — *Sample (shinylive)* et *Sample raw R app* — s'importent
-d'une seule touche et s'exécutent hors ligne sur le moteur shinylive/WebR embarqué.
-Choisissez l'un ou l'autre dans la feuille d'import : il apparaît dans la vitrine avec
-un badge **READY** (« Imported. »), prêt à être lancé, sans réseau ni fichier à récupérer.
 
 ![Vitrine affichant « Sample (shinylive) » importé et READY](../_screens/0.1.0/05-sample-imported-ok.png){width=320}
 
-L'interface Shiny rendue attend que le moteur WebR termine son démarrage — quelques
-secondes sur un appareil réel — avant de s'afficher. La figure ci-dessus montre
-l'exemple importé et READY dans la vitrine.
-
-## Réglages
-
-Les réglages couvrent le thème (clair / sombre / système) et les préférences
-d'exécution.
-
 ![Réglages](../_screens/0.1.0/04-settings.png){width=320}
-
-## Exécution
-
-| Composant | Rôle |
-|-----------|------|
-| **WebR** | runtime R en WebAssembly. |
-| **shinylive** | runtime Shiny, exécutable dans une WebView. |
-| **Serveur HTTP local** | sert les fichiers avec les en-têtes COOP/COEP requis par WebR. |
-
-## Garantie hors ligne
-
-Les applications s'exécutent entièrement dans le bac à sable WebAssembly local. La
-seule requête sortante a lieu si vous importez délibérément une appli depuis une URL.
-
-## Où l'obtenir
-
-Android uniquement pour l'instant — une **version de développement (APK signé)**
-via [GitHub Releases](https://github.com/etabli-dev/etabli-vitrine/releases/tag/v0.1.0).
-App Store, Google Play et F-Droid sont prévus mais pas encore disponibles.

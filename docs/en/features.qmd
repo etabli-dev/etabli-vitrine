@@ -3,59 +3,18 @@ title: "Features"
 sidebar: en
 ---
 
-A guided, screenshot-by-screenshot walkthrough of Établi Vitrine v0.1.0 — the
-display case that runs Shiny apps offline via shinylive + WebR. Every figure below
-is a real screenshot of the v0.1.0 build on an Android device.
+Import and run compatible Shiny apps with the bundled local R runtime. Import ZIP bundles or app.R / ui.R + server.R; missing packages are reported.
 
-## The library
+This page describes the October 2026 source revision. These changes are unpublished and are not part of older development releases. Local checks are distinct from device, live-service and store acceptance.
 
-The library ("display case") lists the Shiny apps you've imported, each runnable
-offline with one tap. On a fresh install it's empty and points you to **+ Import**.
+[Current status / Aktueller Stand / État actuel](../current-status.qmd)
+
+Historical screenshots from v0.1.0; these are not verification of the current revision.
 
 ![Library — empty display case](../_screens/0.1.0/01-library.png){width=320}
 
-## Importing a Shiny app
-
-**+ Import** opens a sheet with four sources: **From device files** (a shinylive
-`.zip`, or `app.R` / `ui.R` + `server.R`), **From URL** (download a `.zip`), and
-two **bundled samples** — *Sample shinylive app* and *Sample raw R app*.
-
 ![Import sheet — sources incl. bundled samples](../_screens/0.1.0/02-import.png){width=320}
-
-## Bundled samples
-
-The two bundled samples — *Sample (shinylive)* and *Sample raw R app* — import in
-one tap and run offline on the bundled shinylive/WebR engine. Pick either from the
-import sheet and it lands in the library with a **READY** badge ("Imported."), ready
-to launch with no network and no files to fetch.
 
 ![Library showing "Sample (shinylive)" imported and READY](../_screens/0.1.0/05-sample-imported-ok.png){width=320}
 
-The rendered Shiny UI needs the WebR engine to finish booting — a few seconds on a
-real device — before the app draws. The figure above shows the sample imported and
-READY in the library.
-
-## Settings
-
-Settings covers theme (light / dark / system) and runtime preferences.
-
 ![Settings](../_screens/0.1.0/04-settings.png){width=320}
-
-## Runtime
-
-| Component | Role |
-|-----------|------|
-| **WebR** | R runtime as WebAssembly. |
-| **shinylive** | Shiny runtime, runnable in a WebView. |
-| **Local HTTP server** | Serves assets with the COOP/COEP headers WebR needs for `SharedArrayBuffer`. |
-
-## Offline guarantee
-
-Apps run fully inside the local WebAssembly sandbox. The only outgoing request is
-when you deliberately import an app from a URL.
-
-## Where to get it
-
-Android only for now — a **development build (signed APK)** via
-[GitHub Releases](https://github.com/etabli-dev/etabli-vitrine/releases/tag/v0.1.0).
-App Store, Google Play and F-Droid are planned but not yet available.

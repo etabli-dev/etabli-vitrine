@@ -11,8 +11,9 @@ import 'package:vitrine/data/repositories/library_repository.dart';
 import 'package:vitrine/theme/theme_controller.dart';
 
 void main() {
-  testWidgets('Library shows empty display case on first launch',
-      (WidgetTester tester) async {
+  testWidgets('Library shows empty display case on first launch', (
+    WidgetTester tester,
+  ) async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
 

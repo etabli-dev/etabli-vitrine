@@ -3,30 +3,10 @@ title: "Premiers pas"
 sidebar: fr
 ---
 
-## Prérequis
+Importer et exécuter des applications Shiny compatibles avec le moteur R local : archives ZIP ou app.R, ou ui.R avec server.R. Les paquets manquants sont signalés.
 
-- Un appareil iOS, Android ou desktop.
-- Aucun serveur, aucun compte, aucune inscription.
+Cette page décrit les sources d’octobre 2026. Ces modifications ne sont pas publiées et ne figurent pas dans les anciennes versions de développement. Les contrôles locaux ne remplacent pas la validation sur appareil, serveur réel ou boutique.
 
-## Configuration
+[Fonctions actuelles, prérequis et commandes (en anglais)](../current-status.qmd)
 
-1. **Installer.** Établi Vitrine est en développement. Téléchargez la **version de développement (APK signé)** depuis [GitHub Releases](https://github.com/etabli-dev/etabli-vitrine/releases) et installez-la sur Android, ou compilez une version desktop depuis le dépôt. Les versions App Store, Google Play et F-Droid ne sont pas encore disponibles.
-2. **Ouvrir.** Au premier lancement, l'appli décompresse les runtimes embarqués (WebR et shinylive) et lance un serveur HTTP loopback local avec les en-têtes nécessaires à `SharedArrayBuffer`.
-3. **Lancer l'exemple.** La bibliothèque contient une appli Shiny d'exemple ; un tap pour la démarrer.
-
-## Importer votre propre appli Shiny
-
-| Source | Comment |
-|--------|---------|
-| **Fichier** | Importer → sélecteur de fichiers → un `.zip` (bundle shinylive) ou un dossier avec `app.R` (ou `ui.R` + `server.R`). |
-| **URL** | Dialogue d'import → saisir l'URL d'un `.zip`. |
-| **Feuille de partage** | Partager un `.zip` depuis une autre appli et choisir Vitrine comme destination. |
-| **Source brute** | Dialogue d'import → « Source brute » → coller du code R ; Vitrine construit un `app.json` shinylive interne. |
-
-Les applis importées arrivent dans la bibliothèque (la « vitrine ») et peuvent y être relancées ou supprimées.
-
-## Remarques
-
-- Les bundles shinylive sont autonomes — tous les paquets R requis sont inclus dans le bundle.
-- Pour la source brute, Vitrine essaie de détecter les paquets manquants et signale ceux qui ne sont pas disponibles dans la distribution WebR embarquée.
-- WebR et shinylive sont des distributions WebAssembly open source ; versions et URL sources dans `THIRD_PARTY.md`.
+[README](https://github.com/etabli-dev/etabli-vitrine/blob/main/README.md) · [GitHub](https://github.com/etabli-dev/etabli-vitrine)

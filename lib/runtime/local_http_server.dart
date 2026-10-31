@@ -62,8 +62,9 @@ class LocalHttpServer {
     final path = req.uri.path;
     final virtual = virtualRoutes[path];
     if (virtual != null) {
-      res.headers.contentType =
-          (path == '/' || path.endsWith('.html')) ? ContentType.html : mimeFor(path);
+      res.headers.contentType = (path == '/' || path.endsWith('.html'))
+          ? ContentType.html
+          : mimeFor(path);
       res.write(virtual);
       await res.close();
       return;
@@ -84,8 +85,9 @@ class LocalHttpServer {
   static ContentType mimeFor(String path) {
     final ext = p.extension(path).toLowerCase();
     return switch (ext) {
-      '.js' || '.mjs' || '.cjs' =>
-        ContentType('text', 'javascript', charset: 'utf-8'),
+      '.js' ||
+      '.mjs' ||
+      '.cjs' => ContentType('text', 'javascript', charset: 'utf-8'),
       '.wasm' || '.so' => ContentType('application', 'wasm'),
       '.json' => ContentType('application', 'json', charset: 'utf-8'),
       '.html' || '.htm' => ContentType.html,
