@@ -4,7 +4,7 @@ title: "Current implementation and first use"
 
 Import and run compatible Shiny apps with the bundled local R runtime. Import ZIP bundles or app.R / ui.R + server.R; missing packages are reported.
 
-This page describes the October 2026 source revision. These source changes are not part of older development release downloads. Local checks are distinct from device, live-service and store acceptance.
+This page describes the October–November 2026 refinements. These source changes are not part of older development release downloads. Local checks are distinct from device, live-service and store acceptance.
 
 ## Build from a clean checkout
 
@@ -24,6 +24,10 @@ These commands build from this source tree. Debug APKs are development artifacts
 
 ## Use and verification
 
-Read the [repository README](https://github.com/etabli-dev/etabli-vitrine/blob/main/README.md) for the exact application workflow, privacy/storage behavior and platform differences. The [October refinement record](https://github.com/etabli-dev/etabli-vitrine/blob/main/docs/refinement-2026-10.md) records findings, changes, observed checks, deferred work and the next release action. Local checks alone do not establish remote CI results.
+Read the [repository README](https://github.com/etabli-dev/etabli-vitrine/blob/main/README.md) for the exact application workflow, privacy/storage behavior and platform differences. The [October–November refinement record](https://github.com/etabli-dev/etabli-vitrine/blob/main/docs/refinement-2026-10.md) records findings, changes, observed checks, deferred work and the next release action. Local checks alone do not establish remote CI results.
 
 For published source `2dd7c9a6dd54`, [application CI](https://github.com/etabli-dev/etabli-vitrine/actions/runs/41200149672) passed on 2026-10-31, including host tests, the offline browser Shiny journey and Android packaging. Android WebView/device acceptance and full iOS compilation remain open.
+
+On 2026-11-02, the APK identified in the refinement record imported and ran the bundled Shiny sample offline in Android WebView on an API 35 ARM64/4 KiB emulator. Changing `mpg` to `cyl` updated the histogram and summary; the library entry and runtime worked after restart. SEND_MULTIPLE intent routing resolved, but actual incoming multi-file sharing remains untested. Physical-device/16 KiB behavior, full iOS compilation and GPL corresponding-source/distribution gates remain open.
+
+Automatic CI APK uploads are held until the runtime source-delivery gate in [THIRD_PARTY.md](https://github.com/etabli-dev/etabli-vitrine/blob/main/THIRD_PARTY.md) is closed; preparation, runtime tests and APK builds remain enabled.

@@ -1,4 +1,4 @@
-# October 2026 refinement
+# October–November 2026 refinement
 
 ## Purpose and acceptance criteria
 
@@ -26,7 +26,7 @@ Completed local milestones:
 
 Raw suite receipts: `vitrine-share-check-r2, vitrine-analyze-final-r2, vitrine-runtime-final, vitrine-android-final, vitrine-runtime-preparation-tests` in `.refinement/2026-10-30/logs/`. First-use prerequisites and commands are in [README](https://github.com/etabli-dev/etabli-vitrine/blob/main/README.md).
 
-The host test, offline browser runtime and Android packaging gates are satisfied. Android WebView execution, physical-device lifecycle/share-sheet behavior, full iOS compilation and signed distribution remain external gates. The F-Droid draft is explicitly disabled; neither its old tag nor binary-runtime downloads constitute a completed source-build recipe. Before distribution, provide the corresponding GPL runtime source and tested source-build instructions, select the approved version/signing plan, then exercise upgrades and offline operation on devices. No signed application release or store submission occurred.
+The host test, offline browser runtime and Android packaging gates are satisfied. The scoped November 2 Android WebView rendering/reactivity result is recorded below. Broader physical-device lifecycle/share-sheet behavior, full iOS compilation and signed distribution remain separate gates. The F-Droid draft is explicitly disabled; neither its old tag nor binary-runtime downloads constitute a completed source-build recipe. Before distribution, provide the corresponding GPL runtime source and tested source-build instructions, select the approved version/signing plan, then exercise upgrades and offline operation on devices. No signed application release or store submission occurred.
 
 ## Deferred work
 
@@ -59,3 +59,15 @@ The runtime journey ran in a browser; it does not establish Android WebView exec
 The final APK installed successfully on the local API 35 arm64 emulator (4 KiB pages). The planned Vitrine UI journey was not reached: the preceding Flutter startup stalled, and a bounded retry after stopping the separate test emulator and idle build JVMs still produced a black screenshot and a null accessibility root. Android logged system-wide `DeadSystemException` failures, including System UI and the keyboard, with system-server watchdog/lock contention during recovery. No Vitrine runtime defect can be inferred from that environment failure.
 
 Actual Android sample rendering, control interaction, import persistence, SEND_MULTIPLE resolution and share-sheet delivery remain unverified. The 27 passing Flutter tests, real socket cleanup regression and browser Shiny smoke are the observed behavior checks. Repeat the prepared sample/import/share journeys on a responsive emulator or physical device before claiming Android runtime acceptance; API 36/16 KiB device execution and iOS remain unverified. Installation and attempt evidence is in the suite's `.refinement/2026-10-30/android-local/` (`api35-installs.json`, `flutter-api35-first-attempt.json`, `flutter-api35-retry.json`, `flutter-api35-system-failure.log`); `FLUTTER_JOURNEYS.md` contains the next steps.
+
+## Runtime artifact distribution review — 2026-11-02
+
+Confirmed: application CI uploaded debug APKs containing GPL-licensed WebR binaries while complete corresponding-source delivery for the bundled runtime and R package image remained unverified. Pinned binary hashes and source-tag links do not close that distribution gate. Preserve all preparation, analysis, unit/runtime tests and APK-build checks; retain screenshots and preparation receipts, and pause automatic APK uploads until matching source materials and delivery instructions have been checked. Historical artifacts/releases are preserved and are not retroactively described as source-verified. Corresponding-source preparation and the disabled F-Droid recipe are deferred maintainer work, not an unavailable account or device prerequisite.
+
+### Installed Android Shiny journey — 2026-11-02
+
+The debug APK, SHA-256 `c425e91075b62562c4a17db08a322205c5d5347766f1936583e8c1471c95537b`, passed a scoped actual API 35 ARM64/4 KiB emulator journey with guest external networking disabled. Importing the bundled sample produced a persistent library entry and rendered the real Shiny application in Android WebView. Changing Variable from `mpg` to `cyl` updated the histogram to counts 11/7/14 at 4/6/8 and the summary to median 6, mean 6.188. The library entry survived force-stop/relaunch and the runtime rendered again offline. Runtime input selection started again at default `mpg`; the persisted object was the library entry.
+
+Android resolved SEND_MULTIPLE with text/plain to Vitrine's MainActivity. That checks installed intent routing, **not actual incoming multi-file share delivery**. UIAutomator exposed the Flutter toolbar but not embedded HTML nodes; the actual HTML controls were operated from fresh inspected screenshots. Initial loading completed within the bounded observation sequence. The earlier October 31 system failure remains separate historical evidence.
+
+Screenshots, hierarchies, process logs, routing output and the exact install receipt are retained in `.refinement/2026-10-30/android-local/games-flutter-20261102-pass1/` (`vitrine-result.json`, `vitrine-send-multiple-routing.txt`, `RESULTS.md`) in the suite workspace. The scoped Android WebView rendering, reactivity and import-persistence checks are now observed. Actual share-sheet delivery, broader lifecycle/accessibility, physical-device and 16 KiB execution, full iOS compilation, corresponding-source delivery and signed distribution remain open.
