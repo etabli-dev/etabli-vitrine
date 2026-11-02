@@ -26,7 +26,7 @@ Completed local milestones:
 
 Raw suite receipts: `vitrine-share-check-r2, vitrine-analyze-final-r2, vitrine-runtime-final, vitrine-android-final, vitrine-runtime-preparation-tests` in `.refinement/2026-10-30/logs/`. First-use prerequisites and commands are in [README](https://github.com/etabli-dev/etabli-vitrine/blob/main/README.md).
 
-Local core acceptance is satisfied. Physical-device WebView, lifecycle/share-sheet behavior, unsigned iOS compilation and signed distribution remain external gates. The F-Droid draft is explicitly disabled; neither its old tag nor binary-runtime downloads constitute a completed source-build recipe. Before distribution, provide the corresponding GPL runtime source and tested source-build instructions, select the approved version/signing plan, then exercise upgrades and offline operation on devices. No publication or submission occurred.
+The host test, offline browser runtime and Android packaging gates are satisfied. Android WebView execution, physical-device lifecycle/share-sheet behavior, full iOS compilation and signed distribution remain external gates. The F-Droid draft is explicitly disabled; neither its old tag nor binary-runtime downloads constitute a completed source-build recipe. Before distribution, provide the corresponding GPL runtime source and tested source-build instructions, select the approved version/signing plan, then exercise upgrades and offline operation on devices. No signed application release or store submission occurred.
 
 ## Deferred work
 
@@ -47,6 +47,12 @@ Confirmed: the Shiny runner bound its loopback server before saving last-run met
 Verification: `vitrine-runtime-tests` passed all 27 Flutter tests and `vitrine-runtime-analyze` found no issues. The new regression injects a last-run metadata failure through the production runner and confirms its real bound port can immediately be reused. Grouped-source share tests also pass. Android intent resolution remains an emulator check.
 
 Final local build receipt `vitrine-android-runtime-review` completed with exit 0 on 2026-10-30 and produced the arm64 debug APK. SHA-256: `c425e91075b62562c4a17db08a322205c5d5347766f1936583e8c1471c95537b`. The socket regression and 27-test suite verify local behavior; actual Android Shiny rendering, import persistence and share intent delivery still require the device journeys. The publication-wording documentation render also passed; the suite link check found no missing targets across 12 sites and 156 generated pages.
+
+### Published CI outcome — 2026-10-31
+
+Published source commit `2dd7c9a6dd54cbd84ee0c934cc380104313742a3` passed [application CI](https://github.com/etabli-dev/etabli-vitrine/actions/runs/41200149672), including frozen dependency resolution, runtime preparation, analysis, all 27 Flutter tests, the offline browser Shiny journey and Android APK packaging. The [documentation Pages build/deployment](https://github.com/etabli-dev/etabli-vitrine/actions/runs/41200149679) also passed. These are observed remote results for that source commit, separate from the local checks above.
+
+The runtime journey ran in a browser; it does not establish Android WebView execution. Android runtime/device acceptance and full iOS compilation remain open, as do signing and store acceptance. The unsuccessful Android attempt is retained below.
 
 ### Android device attempt — 2026-10-31
 
