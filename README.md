@@ -2,7 +2,7 @@
 
 > Run interactive Shiny apps entirely on-device.
 
-`Android` · iOS and desktop runners require platform verification · Apache-2.0 · Part of the [Établi Suite](https://github.com/etabli-dev)
+`Android` · iOS requires platform verification · desktop not planned · Apache-2.0 · Part of the [Établi Suite](https://github.com/etabli-dev)
 
 Établi Vitrine bundles WebR and shinylive-R to execute interactive Shiny applications entirely on your device, without an external server for compatible, fully bundled apps. Imported apps may require additional packages or network access. Share apps in via the system share sheet. Ships with sample apps to get started.
 
@@ -14,7 +14,16 @@
 - **App Store (iOS):** planned — not yet available.
 - **Google Play:** planned — not yet available.
 - **F-Droid:** planned — not yet available.
-- **Desktop runners:** experimental; desktop builds and embedded-WebView support have not been verified in this refinement.
+- **Desktop (Ubuntu/Debian, Windows, macOS):** not planned. The generated `linux/`, `macos/` and `windows/` runner folders have never been built or verified.
+
+## Platforms
+
+Établi Vitrine is a mobile app for Android and iOS, including tablets. Desktops
+run Shiny natively with R, and desktop browsers run shinylive apps directly, so no
+desktop application is planned. The [platform roadmap](docs/platform-roadmap.md)
+covers the remaining iOS work (including share-sheet import), tablet layout,
+signing, store and F-Droid steps, and a recommendation for the unused desktop
+runner folders.
 
 ## Privacy
 
@@ -26,7 +35,7 @@ The bundled examples and runtimes work without an external connection. No analyt
 lib/         app, features, data, theme, widgets
 android/     Android runner
 ios/         iOS runner
-macos/ windows/ linux/    desktop runners
+macos/ windows/ linux/    unverified desktop runners (not a release target)
 .fdroid.yml  disabled F-Droid draft; see FDROID_NOTES.md
 fastlane/    store + F-Droid listing metadata
 ```
@@ -35,7 +44,7 @@ fastlane/    store + F-Droid listing metadata
 
 Dart 3.12+, flutter_riverpod, go_router, drift, flutter_inappwebview
 
-**Status:** In active development — not yet released; dev builds available as a signed APK via [GitHub Releases](../../releases).
+**Status:** In active development — not yet released; dev builds available as a debug-signed APK via [GitHub Releases](../../releases).
 
 ## Support development
 
