@@ -1,6 +1,7 @@
 // Copyright 2026 R. Heller
 // SPDX-License-Identifier: Apache-2.0
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -131,9 +132,10 @@ class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
       ),
       initialSettings: InAppWebViewSettings(
         javaScriptEnabled: true,
-        isInspectable: true,
+        isInspectable: kDebugMode,
+        limitsNavigationsToAppBoundDomains: true,
         // shinylive serves its app into an iframe via its service worker.
-        mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+        mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
       ),
       onConsoleMessage: (controller, msg) =>
           debugPrint('[shinylive] ${msg.message}'),

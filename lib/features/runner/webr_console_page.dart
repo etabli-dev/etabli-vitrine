@@ -1,6 +1,7 @@
 // Copyright 2026 R. Heller
 // SPDX-License-Identifier: Apache-2.0
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,8 +40,10 @@ class _Booting extends StatelessWidget {
         children: [
           const CircularProgressIndicator(),
           const SizedBox(height: VitrineTokens.space4),
-          Text('Unpacking WebR runtime…',
-              style: Theme.of(context).textTheme.bodySmall),
+          Text(
+            'Unpacking WebR runtime…',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
         ],
       ),
     );
@@ -56,9 +59,11 @@ class _RuntimeError extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(VitrineTokens.space5),
-        child: Text('WebR failed to start:\n\n$message',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium),
+        child: Text(
+          'WebR failed to start:\n\n$message',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
       ),
     );
   }
@@ -84,27 +89,29 @@ class _ConsoleViewState extends State<_ConsoleView> {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(
-              horizontal: VitrineTokens.space4, vertical: VitrineTokens.space2),
+            horizontal: VitrineTokens.space4,
+            vertical: VitrineTokens.space2,
+          ),
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: colors.border)),
           ),
           child: Text(
             _ready ? '● R session live (offline)' : (_status ?? '○ starting…'),
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: _ready ? VitrineTokens.accent : colors.textMuted,
-                ),
+              color: _ready ? VitrineTokens.accent : colors.textMuted,
+            ),
           ),
         ),
         Expanded(
           child: InAppWebView(
-            initialUrlRequest:
-                URLRequest(url: WebUri.uri(widget.baseUri)),
+            initialUrlRequest: URLRequest(url: WebUri.uri(widget.baseUri)),
             initialSettings: InAppWebViewSettings(
               javaScriptEnabled: true,
               transparentBackground: true,
-              isInspectable: true,
+              isInspectable: kDebugMode,
+              limitsNavigationsToAppBoundDomains: true,
               // Allow the loopback http origin inside the WebView.
-              mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+              mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
             ),
             onWebViewCreated: (controller) {
               controller.addJavaScriptHandler(
