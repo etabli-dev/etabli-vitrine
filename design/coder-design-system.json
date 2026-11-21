@@ -49,6 +49,13 @@
     "baseGlyph": "Rounded square tile, accent-green fill (#28A745), white mark centered.",
     "cornerRadius": "22% of canvas (iOS superellipse handled by OS; ship square master).",
     "masterSize": 1024,
-    "note": "Each app overlays ONE distinct white line-glyph on the shared green tile so the suite reads as a family. See icons/ICON_SPEC.md."
+    "glyph": {
+      "style": "One-line drawing: one continuous main stroke with rounded corners, at most one or two small detached marks (like the suite icon's E middle arm and accent).",
+      "fill": "Outer extent ~70% of the tile (~720 px of 1024); square glyphs optically reduced to 660-680 px.",
+      "strokeWidth": 44,
+      "androidForegroundScale": 0.64,
+      "source": "etabli-dev/.github icons/ (glyphs.py + build.py); suite icon profile/icons/etabli-suite.svg"
+    },
+    "note": "Each app overlays ONE distinct white one-line glyph on the shared green tile so the suite reads as a family. See icons/ICON_SPEC.md; regenerate platform assets with etabli-dev/.github icons/build.py."
   }
 }
