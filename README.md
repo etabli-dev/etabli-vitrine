@@ -2,18 +2,18 @@
 
 > Run interactive Shiny apps entirely on-device.
 
-`Android` · iOS requires platform verification · desktop not planned · All rights reserved · Part of the [Établi Suite](https://github.com/etabli-dev)
+`Android` · iOS requires platform verification · desktop not planned · AGPL-3.0-only · Part of the [Établi Suite](https://github.com/etabli-dev)
 
 Établi Vitrine bundles WebR and shinylive-R to execute interactive Shiny applications entirely on your device, without an external server for compatible, fully bundled apps. Imported apps may require additional packages or network access. Share apps in via the system share sheet. Ships with sample apps to get started.
 
 ## Availability
 
-Établi Vitrine is **under active development**. There are no App Store or Google Play releases yet.
+Établi Vitrine is **under active development**. There are no App Store, Google Play or F-Droid releases yet.
 
 - **Android:** build a development APK using the commands below. Automatic CI APK uploads are paused pending the runtime source-delivery checks in [THIRD_PARTY.md](THIRD_PARTY.md); older release downloads do not establish current readiness.
 - **App Store (iOS):** planned — not yet available.
 - **Google Play:** planned — not yet available.
-- **F-Droid:** not planned (F-Droid requires a free licence).
+- **F-Droid:** planned — not yet available.
 - **Desktop (Ubuntu/Debian, Windows, macOS):** not planned. The generated `linux/`, `macos/` and `windows/` runner folders have never been built or verified.
 
 ## Platforms
@@ -48,12 +48,14 @@ Dart 3.12+, flutter_riverpod, go_router, drift, flutter_inappwebview
 
 ## Support development
 
-- 💚 **[Liberapay](https://liberapay.com/rabanheller/)** — recurring, 0% commission.
+- 💚 **[Liberapay](https://liberapay.com/rabanheller/)** — recurring, 0% commission, to be shown on the F-Droid listing once published.
 
 ## License
 
-Proprietary, all rights reserved — see [LICENSE](LICENSE) and [NOTICE](NOTICE). Third-party components keep
-their own licences. Versions published before 22 November 2026 remain available under Apache-2.0.
+GNU Affero General Public License v3.0 only (AGPL-3.0-only) — see [LICENSE](LICENSE) and
+[NOTICE](NOTICE). Commercial licences are available from the copyright holder
+(etabli.dev@outlook.com). Third-party components keep their own licences. Versions published
+before 22 November 2026 remain available under Apache-2.0.
 
 Copyright 2026 R. Heller.
 

@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: LicenseRef-Proprietary
+// SPDX-License-Identifier: AGPL-3.0-only
 
 /// Outcome of resolving an app's R packages against the WebR WASM repo.
 enum ResolutionState {

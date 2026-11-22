@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: LicenseRef-Proprietary
+// SPDX-License-Identifier: AGPL-3.0-only
 
 /// How an app entered the display case. Drives staging/run behavior and
 /// what offline guarantees Vitrine can make for it.
