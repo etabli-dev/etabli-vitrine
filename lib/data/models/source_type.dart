@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LicenseRef-Proprietary
 
 /// How an app entered the display case. Drives staging/run behavior and
 /// what offline guarantees Vitrine can make for it.
