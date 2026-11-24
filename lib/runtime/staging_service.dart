@@ -8,6 +8,7 @@ import 'package:archive/archive.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import '../features/import/import_errors.dart';
 
 final stagingServiceProvider = Provider<StagingService>(
   (_) => StagingService(),
@@ -35,7 +36,10 @@ class StagingService {
     final dir = Directory(p.join((await _stagedRoot()).path, appId));
     if (await FileSystemEntity.type(dir.path, followLinks: false) ==
         FileSystemEntityType.link) {
-      throw const FormatException('A staged app cannot be a symbolic link.');
+      throw const ImportException(
+        ImportErrorKind.archiveLinks,
+        'A staged app cannot be a symbolic link.',
+      );
     }
     return dir;
   }
@@ -49,7 +53,10 @@ class StagingService {
         rel
             .split('/')
             .any((part) => part.isEmpty || part == '.' || part == '..')) {
-      throw FormatException('Unsafe archive path: $name');
+      throw ImportException(
+        ImportErrorKind.archiveUnsafe,
+        'Unsafe archive path: $name',
+      );
     }
     return rel;
   }
@@ -61,14 +68,20 @@ class StagingService {
     final names = <String>{};
     for (final entry in archive) {
       if (entry.isSymbolicLink) {
-        throw const FormatException('Archive symlinks are not supported.');
+        throw const ImportException(
+          ImportErrorKind.archiveLinks,
+          'Archive symlinks are not supported.',
+        );
       }
       final name = entry.isDirectory && entry.name.endsWith('/')
           ? entry.name.substring(0, entry.name.length - 1)
           : entry.name;
       final rel = validateRelativePath(name);
       if (!names.add(rel)) {
-        throw FormatException('Duplicate archive path: $rel');
+        throw ImportException(
+          ImportErrorKind.archiveUnsafe,
+          'Duplicate archive path: $rel',
+        );
       }
       if (entry.isFile) {
         total += entry.size;
@@ -76,7 +89,8 @@ class StagingService {
         if (entry.size < 0 ||
             total > maxExpandedBytes ||
             count > maxArchiveFiles) {
-          throw const FormatException(
+          throw const ImportException(
+            ImportErrorKind.sizeLimit,
             'Expanded archive exceeds the import limit.',
           );
         }
@@ -99,7 +113,10 @@ class StagingService {
     validateArchive(archive);
     if (prefix.isNotEmpty) {
       if (!prefix.endsWith('/')) {
-        throw const FormatException('Invalid archive prefix.');
+        throw const ImportException(
+          ImportErrorKind.archiveUnsafe,
+          'Invalid archive prefix.',
+        );
       }
       validateRelativePath(prefix.substring(0, prefix.length - 1));
     }
@@ -107,7 +124,10 @@ class StagingService {
       (entry) =>
           entry.isFile && entry.name.replaceAll('\\', '/').startsWith(prefix),
     )) {
-      throw const FormatException('The archive contains no app files.');
+      throw const ImportException(
+        ImportErrorKind.archiveEmpty,
+        'The archive contains no app files.',
+      );
     }
     final dir = await dirFor(appId);
     await dir.parent.create(recursive: true);
@@ -159,7 +179,8 @@ class StagingService {
       current = p.join(current, part);
       if (await FileSystemEntity.type(current, followLinks: false) ==
           FileSystemEntityType.link) {
-        throw const FormatException(
+        throw const ImportException(
+          ImportErrorKind.archiveLinks,
           'Staged paths cannot contain symbolic links.',
         );
       }

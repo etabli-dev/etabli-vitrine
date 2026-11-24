@@ -9,6 +9,7 @@ import 'package:path/path.dart' as p;
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 import 'import_controller.dart';
+import '../../l10n/l10n.dart';
 
 /// Serializes share deliveries. Source files remain untouched on any failure.
 class ShareImportListener {
@@ -32,17 +33,10 @@ class ShareImportListener {
           await _enqueue(files);
           if (!_disposed) await ReceiveSharingIntent.instance.reset();
         })
-        .catchError(
-          (Object _) =>
-              _report('Could not read the shared files. Retry from Files.'),
-        );
-    _sub = ReceiveSharingIntent.instance.getMediaStream().listen(
-      (files) {
-        _enqueue(files);
-      },
-      onError: (Object _) =>
-          _report('Could not receive the share. Retry from Files.'),
-    );
+        .catchError((Object _) => _report(L10n.current.shareReadFailed));
+    _sub = ReceiveSharingIntent.instance.getMediaStream().listen((files) {
+      _enqueue(files);
+    }, onError: (Object _) => _report(L10n.current.shareReceiveFailed));
   }
 
   Future<void> _enqueue(List<SharedMediaFile> files) => _queue = _queue.then(
@@ -94,9 +88,7 @@ class ShareImportListener {
           sources[name] = bytes;
         }
       } catch (_) {
-        _report(
-          'Could not import $path. Use a readable .zip or app.R (or ui.R with server.R) within the import limit. Source files are unchanged.',
-        );
+        _report(L10n.current.shareImportFailed(path));
         // A partial source set must not be imported as a complete application.
         return;
       }
@@ -105,13 +97,11 @@ class ShareImportListener {
       try {
         await _controller.importRawSourceFiles(
           sources,
-          name: 'Shared app',
+          name: L10n.current.importSharedName,
           sourceUri: paths.join('\n'),
         );
       } catch (_) {
-        _report(
-          'Could not import the shared R sources. Include app.R, or both ui.R and server.R. Source files are unchanged.',
-        );
+        _report(L10n.current.shareSourcesFailed);
       }
     }
   }

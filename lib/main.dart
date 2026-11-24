@@ -21,6 +21,7 @@ Future<void> main() async {
     ], await rootBundle.loadString('assets/licenses/shinylive-LICENSE.txt'));
   });
   final prefs = await SharedPreferences.getInstance();
+  await migrateLegacyThemeMode(prefs);
   runApp(
     ProviderScope(
       overrides: [sharedPrefsProvider.overrideWithValue(prefs)],

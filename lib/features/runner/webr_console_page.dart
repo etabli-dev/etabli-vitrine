@@ -6,9 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/labels.dart';
+import '../../l10n/l10n.dart';
 import '../../runtime/webr_providers.dart';
+import '../../runtime/webr_runtime.dart';
 import '../../theme/coder_theme_vitrine.dart';
 import '../../theme/coder_theme_vitrine_tokens.dart';
+import '../../theme/theme_controller.dart';
 
 /// Milestone 2 surface: boots the bundled WebR runtime in an embedded WebView
 /// and shows the R banner / a minimal REPL, fully offline.
@@ -19,11 +23,18 @@ class WebRConsolePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final baseUri = ref.watch(webrBaseUriProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('WebR Console')),
+      appBar: AppBar(title: Text(context.l10n.consoleTitle)),
       body: baseUri.when(
         loading: () => const _Booting(),
-        error: (e, _) => _RuntimeError(message: '$e'),
-        data: (uri) => _ConsoleView(baseUri: uri),
+        error: (e, _) =>
+            _RuntimeError(message: context.l10n.importErrorText(e)),
+        data: (uri) => _ConsoleView(
+          baseUri: WebRRuntime.consoleUri(
+            uri,
+            context.l10n,
+            ref.watch(accentProvider),
+          ),
+        ),
       ),
     );
   }
@@ -41,7 +52,7 @@ class _Booting extends StatelessWidget {
           const CircularProgressIndicator(),
           const SizedBox(height: VitrineTokens.space4),
           Text(
-            'Unpacking WebR runtime…',
+            context.l10n.consoleUnpacking,
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -60,7 +71,7 @@ class _RuntimeError extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(VitrineTokens.space5),
         child: Text(
-          'WebR failed to start:\n\n$message',
+          context.l10n.consoleFailed(message),
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
@@ -79,11 +90,13 @@ class _ConsoleView extends StatefulWidget {
 
 class _ConsoleViewState extends State<_ConsoleView> {
   bool _ready = false;
-  String? _status;
+  bool _booting = false;
+  String? _error;
 
   @override
   Widget build(BuildContext context) {
     final colors = VitrineColors.of(context);
+    final l = context.l10n;
     return Column(
       children: [
         Container(
@@ -96,9 +109,15 @@ class _ConsoleViewState extends State<_ConsoleView> {
             border: Border(bottom: BorderSide(color: colors.border)),
           ),
           child: Text(
-            _ready ? '● R session live (offline)' : (_status ?? '○ starting…'),
+            _ready
+                ? l.consoleLive
+                : _error != null
+                ? '✕ $_error'
+                : _booting
+                ? l.consoleStatusBooting
+                : l.consoleStarting,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: _ready ? VitrineTokens.accent : colors.textMuted,
+              color: _ready ? colors.accent : colors.textMuted,
             ),
           ),
         ),
@@ -125,9 +144,9 @@ class _ConsoleViewState extends State<_ConsoleView> {
                     if (type == 'ready') {
                       _ready = true;
                     } else if (type == 'status') {
-                      _status = '○ ${msg['data']}';
+                      _booting = true;
                     } else if (type == 'error') {
-                      _status = '✕ ${msg['data']}';
+                      _error = '${msg['data']}';
                     }
                   });
                 },

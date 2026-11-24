@@ -1,0 +1,203 @@
+{
+  "@@locale": "en",
+  "commonCancel": "Cancel",
+  "commonSave": "Save",
+  "commonDelete": "Delete",
+  "libraryTitle": "Établi Vitrine",
+  "librarySettings": "Settings",
+  "libraryImport": "Import",
+  "libraryLoadFailed": "Failed to load library:\n{detail}",
+  "@libraryLoadFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "importSheetTitle": "IMPORT",
+  "importFromFiles": "From device files",
+  "importFromFilesHint": "A shinylive .zip, or app.R / ui.R + server.R",
+  "importFromUrl": "From URL",
+  "importFromUrlHint": "Download a .zip (shinylive bundle or source)",
+  "importSampleShinylive": "Sample shinylive app",
+  "importSampleShinyliveHint": "Bundled demo — runs offline",
+  "importSampleRaw": "Sample raw R app",
+  "importSampleRawHint": "Raw app.R staged + run via WebR",
+  "importUrlTitle": "Import from URL",
+  "importing": "Importing…",
+  "imported": "Imported.",
+  "importFailed": "Import failed: {detail}",
+  "@importFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "importDefaultName": "Imported app",
+  "importSharedName": "Shared app",
+  "importSampleName": "Sample (shinylive)",
+  "importSampleRawName": "Raw R sample",
+  "emptyTitle": "The display case is empty",
+  "emptyBody": "Import a Shiny app to run it offline.",
+  "tagOnlineOnly": "Online only",
+  "appDetails": "Details",
+  "appDetailsFor": "Details for {name}",
+  "@appDetailsFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "appRename": "Rename",
+  "appNameHint": "App name",
+  "appDeleteTitle": "Delete app?",
+  "appDeleteBody": "Remove “{name}” and its staged files? This cannot be undone.",
+  "@appDeleteBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "appLaunchOffline": "Launch (offline)",
+  "appOpenOnline": "Open (online)",
+  "appImported": "Imported",
+  "appLastRun": "Last run",
+  "appLastRunFull": "Last run",
+  "appNever": "Never",
+  "appSource": "Source",
+  "appResolveFailed": "This app failed to resolve.",
+  "appPackagesMaybeMissing": "Some packages may be unavailable.",
+  "resolutionNotBundled": "Not bundled (needs a connection at launch): {packages}",
+  "@resolutionNotBundled": {
+    "placeholders": {
+      "packages": {
+        "type": "String"
+      }
+    }
+  },
+  "launchResolutionFailed": "Resolution failed",
+  "launchPackageWarnings": "Package warnings",
+  "launchAnywayBody": "{detail}\n\nLaunch anyway? Missing packages would need a connection at launch.",
+  "@launchAnywayBody": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "launchAnyway": "Launch anyway",
+  "sourceShinylive": "Shinylive bundle",
+  "sourceRaw": "Raw Shiny source",
+  "sourcePackage": "Package app",
+  "sourceLiveUrl": "Live URL",
+  "statePending": "Pending",
+  "stateReady": "Ready",
+  "stateWarnings": "Warnings",
+  "stateFailed": "Failed",
+  "stateNotApplicable": "N/A",
+  "settingsTitle": "Settings",
+  "settingsAppearance": "APPEARANCE",
+  "settingsRuntime": "RUNTIME",
+  "settingsAbout": "ABOUT",
+  "settingsWebrConsole": "WebR Console",
+  "settingsWebrConsoleHint": "Offline R {version} REPL — boot test",
+  "@settingsWebrConsoleHint": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsAboutBody": "Offline Shiny app runner.",
+  "settingsLicenses": "Open-source licenses",
+  "settingsLanguage": "App language",
+  "settingsMode": "Mode",
+  "modeSystem": "System",
+  "modeLight": "Light",
+  "modeDark": "Dark",
+  "languageSystem": "System",
+  "settingsAccent": "Accent colour",
+  "accentCoderBlue": "Coder blue",
+  "accentGreen": "Green",
+  "accentYellow": "Yellow",
+  "accentOrange": "Orange",
+  "accentRed": "Red",
+  "accentPurple": "Purple",
+  "accentGraphite": "Graphite",
+  "settingsAppearanceNote": "Language, mode and accent colour apply at once. Default: Hugo Coder palette.",
+  "consoleTitle": "WebR Console",
+  "consoleUnpacking": "Unpacking WebR runtime…",
+  "consoleFailed": "WebR failed to start:\n\n{detail}",
+  "@consoleFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "consoleLive": "● R session live (offline)",
+  "consoleStarting": "○ starting…",
+  "consoleStatusBooting": "○ booting",
+  "runnerFailed": "Failed to launch:\n\n{detail}",
+  "@runnerFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "runnerAppJsonMissing": "Staged app.json is missing — re-import this app.",
+  "runnerFilesMissing": "Staged files are missing — re-import this app.",
+  "webConsolePlaceholder": "starting WebR…",
+  "webConsoleBooting": "Booting WebR {version} (R {rVersion}) — offline…",
+  "@webConsoleBooting": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "rVersion": {
+        "type": "String"
+      }
+    }
+  },
+  "webConsolePlatform": "Platform:",
+  "webConsoleChannel": "Channel:",
+  "webConsoleIsolated": "SharedArrayBuffer (cross-origin isolated)",
+  "webConsoleNotIsolated": "PostMessage (no isolation)",
+  "webConsoleReady": "WebR is ready. Type R expressions below.",
+  "webConsoleInitError": "Init error:",
+  "shareReadFailed": "Could not read the shared files. Retry from Files.",
+  "shareReceiveFailed": "Could not receive the share. Retry from Files.",
+  "shareImportFailed": "Could not import {path}. Use a readable .zip or app.R (or ui.R with server.R) within the import limit. Source files are unchanged.",
+  "@shareImportFailed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "shareSourcesFailed": "Could not import the shared R sources. Include app.R, or both ui.R and server.R. Source files are unchanged.",
+  "errorSizeLimit": "Import exceeds the size limit.",
+  "errorNotZip": "Not a valid zip archive.",
+  "errorNotShinyApp": "Not a recognized Shiny app or shinylive bundle.",
+  "errorSourcesLimit": "Source files exceed the import limit.",
+  "errorNoAppR": "No app.R (or ui.R + server.R) found in the source.",
+  "errorUrlScheme": "Enter an HTTP or HTTPS URL.",
+  "errorHttpStatus": "Download failed (HTTP {status}).",
+  "@errorHttpStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "errorArchiveUnsafe": "The archive contains unsafe or duplicate paths.",
+  "errorArchiveLinks": "Archives and staged apps cannot contain symbolic links.",
+  "errorArchiveEmpty": "The archive contains no app files.",
+  "errorRuntimeIncomplete": "The bundled runtime is incomplete.",
+  "errorTimeout": "The download timed out.",
+  "errorNetwork": "The download failed. Check the connection and the URL."
+}

@@ -9,6 +9,8 @@ import 'package:go_router/go_router.dart';
 import '../../data/models/resolution_status.dart';
 import '../../data/models/shiny_app.dart';
 import '../../data/repositories/library_repository.dart';
+import '../../l10n/l10n.dart';
+import '../../l10n/labels.dart';
 import '../../theme/coder_theme_vitrine.dart';
 import '../../theme/coder_theme_vitrine_tokens.dart';
 import '../../widgets/bordered_card.dart';
@@ -23,12 +25,14 @@ class LibraryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final library = ref.watch(libraryStreamProvider);
+    final l = context.l10n;
+    final colors = VitrineColors.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Établi Vitrine'),
+        title: Text(l.libraryTitle),
         actions: [
           IconButton(
-            tooltip: 'Settings',
+            tooltip: l.librarySettings,
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => context.push('/settings'),
           ),
@@ -37,13 +41,13 @@ class LibraryScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showImportSheet(context, ref),
         icon: const Icon(Icons.add),
-        backgroundColor: VitrineTokens.accent,
-        foregroundColor: Colors.white,
-        label: const Text('Import'),
+        backgroundColor: colors.accent,
+        foregroundColor: colors.onAccent,
+        label: Text(l.libraryImport, maxLines: 1, softWrap: false),
       ),
       body: library.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Failed to load library:\n$e')),
+        error: (e, _) => Center(child: Text(l.libraryLoadFailed('$e'))),
         data: (apps) =>
             apps.isEmpty ? const _EmptyCase() : _LibraryList(apps: apps),
       ),
@@ -51,6 +55,8 @@ class LibraryScreen extends ConsumerWidget {
   }
 
   Future<void> _showImportSheet(BuildContext context, WidgetRef ref) async {
+    final l = context.l10n;
+    final accent = VitrineColors.of(context).accent;
     final choice = await showModalBottomSheet<String>(
       context: context,
       showDragHandle: true,
@@ -59,37 +65,43 @@ class LibraryScreen extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(VitrineTokens.space4, 0,
-                  VitrineTokens.space4, VitrineTokens.space2),
+              padding: const EdgeInsets.fromLTRB(
+                VitrineTokens.space4,
+                0,
+                VitrineTokens.space4,
+                VitrineTokens.space2,
+              ),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text('IMPORT',
-                    style: Theme.of(context).textTheme.labelSmall),
+                child: Text(
+                  l.importSheetTitle,
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.folder_open, color: VitrineTokens.accent),
-              title: const Text('From device files'),
-              subtitle: const Text('A shinylive .zip, or app.R / ui.R + server.R'),
+              leading: Icon(Icons.folder_open, color: accent),
+              title: Text(l.importFromFiles),
+              subtitle: Text(l.importFromFilesHint),
               onTap: () => Navigator.pop(context, 'files'),
             ),
             ListTile(
-              leading: const Icon(Icons.link, color: VitrineTokens.accent),
-              title: const Text('From URL'),
-              subtitle: const Text('Download a .zip (shinylive bundle or source)'),
+              leading: Icon(Icons.link, color: accent),
+              title: Text(l.importFromUrl),
+              subtitle: Text(l.importFromUrlHint),
               onTap: () => Navigator.pop(context, 'url'),
             ),
             const Divider(height: 1),
             ListTile(
               leading: const Icon(Icons.science_outlined),
-              title: const Text('Sample shinylive app'),
-              subtitle: const Text('Bundled demo — runs offline'),
+              title: Text(l.importSampleShinylive),
+              subtitle: Text(l.importSampleShinyliveHint),
               onTap: () => Navigator.pop(context, 'sample'),
             ),
             ListTile(
               leading: const Icon(Icons.code),
-              title: const Text('Sample raw R app'),
-              subtitle: const Text('Raw app.R staged + run via WebR'),
+              title: Text(l.importSampleRaw),
+              subtitle: Text(l.importSampleRawHint),
               onTap: () => Navigator.pop(context, 'sampleRaw'),
             ),
           ],
@@ -124,36 +136,49 @@ class LibraryScreen extends ConsumerWidget {
     };
     if (files.length == 1 && files.keys.first.toLowerCase().endsWith('.zip')) {
       final entry = files.entries.first;
-      final name = entry.key.replaceAll(RegExp(r'\.zip$', caseSensitive: false), '');
-      await _runImport(context, ref,
-          (c) => c.importZipBytes(entry.value, name: name, sourceUri: entry.key));
+      final name = entry.key.replaceAll(
+        RegExp(r'\.zip$', caseSensitive: false),
+        '',
+      );
+      await _runImport(
+        context,
+        ref,
+        (c) => c.importZipBytes(entry.value, name: name, sourceUri: entry.key),
+      );
     } else {
-      await _runImport(context, ref,
-          (c) => c.importRawSourceFiles(files, name: 'Imported app'));
+      await _runImport(
+        context,
+        ref,
+        (c) =>
+            c.importRawSourceFiles(files, name: context.l10n.importDefaultName),
+      );
     }
   }
 
   Future<void> _importFromUrl(BuildContext context, WidgetRef ref) async {
     final controller = TextEditingController();
+    final l = context.l10n;
     final url = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Import from URL'),
+        title: Text(l.importUrlTitle),
         content: TextField(
           controller: controller,
           autofocus: true,
           keyboardType: TextInputType.url,
-          decoration: const InputDecoration(hintText: 'https://example.com/app.zip'),
+          decoration: const InputDecoration(
+            hintText: 'https://example.com/app.zip',
+          ),
           onSubmitted: (v) => Navigator.pop(context, v.trim()),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l.commonCancel, maxLines: 1, softWrap: false),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Import'),
+            child: Text(l.libraryImport, maxLines: 1, softWrap: false),
           ),
         ],
       ),
@@ -169,16 +194,19 @@ class LibraryScreen extends ConsumerWidget {
     Future<Object?> Function(ImportController) action,
   ) async {
     final messenger = ScaffoldMessenger.of(context);
-    messenger.showSnackBar(const SnackBar(content: Text('Importing…')));
+    final l = context.l10n;
+    messenger.showSnackBar(SnackBar(content: Text(l.importing)));
     try {
       await action(ref.read(importControllerProvider));
       messenger
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Imported.')));
+        ..showSnackBar(SnackBar(content: Text(l.imported)));
     } catch (e) {
       messenger
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text('Import failed: $e')));
+        ..showSnackBar(
+          SnackBar(content: Text(l.importFailed(l.importErrorText(e)))),
+        );
     }
   }
 }
@@ -197,11 +225,13 @@ class _EmptyCase extends StatelessWidget {
           children: [
             Icon(Icons.inventory_2_outlined, size: 48, color: colors.textMuted),
             const SizedBox(height: VitrineTokens.space4),
-            Text('The display case is empty',
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              context.l10n.emptyTitle,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: VitrineTokens.space2),
             Text(
-              'Import a Shiny app to run it offline.',
+              context.l10n.emptyBody,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall,
             ),
@@ -236,6 +266,8 @@ class _AppTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l = context.l10n;
+    final colors = VitrineColors.of(context);
     return BorderedCard(
       onTap: () => launchApp(context, ref, app),
       child: Row(
@@ -251,18 +283,20 @@ class _AppTile extends ConsumerWidget {
                   spacing: VitrineTokens.space2,
                   runSpacing: VitrineTokens.space2,
                   children: [
-                    MonoTag(app.sourceType.label),
-                    MonoTag(app.resolutionState.label,
-                        color: _statusColor(app.resolutionState)),
+                    MonoTag(l.sourceTypeLabel(app.sourceType)),
+                    MonoTag(
+                      l.resolutionLabel(app.resolutionState),
+                      color: _statusColor(colors, app.resolutionState),
+                    ),
                     if (!app.sourceType.isOfflineCapable)
-                      const MonoTag('Online only', color: VitrineTokens.warn),
+                      MonoTag(l.tagOnlineOnly, color: colors.warn),
                   ],
                 ),
               ],
             ),
           ),
           IconButton(
-            tooltip: 'Details',
+            tooltip: l.appDetailsFor(app.name),
             icon: const Icon(Icons.info_outline),
             onPressed: () => context.push('/app/${app.id}'),
           ),
@@ -271,10 +305,10 @@ class _AppTile extends ConsumerWidget {
     );
   }
 
-  Color? _statusColor(ResolutionState s) => switch (s) {
-        ResolutionState.ready => VitrineTokens.accent,
-        ResolutionState.warnings => VitrineTokens.warn,
-        ResolutionState.failed => VitrineTokens.error,
-        _ => null,
-      };
+  Color? _statusColor(VitrineColors c, ResolutionState s) => switch (s) {
+    ResolutionState.ready => c.success,
+    ResolutionState.warnings => c.warn,
+    ResolutionState.failed => c.error,
+    _ => null,
+  };
 }

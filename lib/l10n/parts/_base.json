@@ -1,0 +1,491 @@
+{
+  "commonCancel": {
+    "en": "Cancel",
+    "de": "Abbrechen"
+  },
+  "commonSave": {
+    "en": "Save",
+    "de": "Speichern"
+  },
+  "commonDelete": {
+    "en": "Delete",
+    "de": "Löschen"
+  },
+  "libraryTitle": {
+    "en": "Établi Vitrine",
+    "de": "Établi Vitrine"
+  },
+  "librarySettings": {
+    "en": "Settings",
+    "de": "Einstellungen"
+  },
+  "libraryImport": {
+    "en": "Import",
+    "de": "Importieren"
+  },
+  "libraryLoadFailed": {
+    "en": "Failed to load library:\n{detail}",
+    "de": "Die Bibliothek konnte nicht geladen werden:\n{detail}",
+    "placeholders": {
+      "detail": "String"
+    }
+  },
+  "importSheetTitle": {
+    "en": "IMPORT",
+    "de": "IMPORTIEREN"
+  },
+  "importFromFiles": {
+    "en": "From device files",
+    "de": "Aus Dateien auf dem Gerät"
+  },
+  "importFromFilesHint": {
+    "en": "A shinylive .zip, or app.R / ui.R + server.R",
+    "de": "Ein shinylive-.zip oder app.R / ui.R + server.R"
+  },
+  "importFromUrl": {
+    "en": "From URL",
+    "de": "Von einer URL"
+  },
+  "importFromUrlHint": {
+    "en": "Download a .zip (shinylive bundle or source)",
+    "de": "Ein .zip laden (shinylive-Bundle oder Quelltext)"
+  },
+  "importSampleShinylive": {
+    "en": "Sample shinylive app",
+    "de": "Beispiel: shinylive-App"
+  },
+  "importSampleShinyliveHint": {
+    "en": "Bundled demo — runs offline",
+    "de": "Mitgelieferte Demo – läuft offline"
+  },
+  "importSampleRaw": {
+    "en": "Sample raw R app",
+    "de": "Beispiel: R-Quelltext-App"
+  },
+  "importSampleRawHint": {
+    "en": "Raw app.R staged + run via WebR",
+    "de": "app.R wird bereitgestellt und mit WebR ausgeführt"
+  },
+  "importUrlTitle": {
+    "en": "Import from URL",
+    "de": "Von URL importieren"
+  },
+  "importing": {
+    "en": "Importing…",
+    "de": "Wird importiert …"
+  },
+  "imported": {
+    "en": "Imported.",
+    "de": "Importiert."
+  },
+  "importFailed": {
+    "en": "Import failed: {detail}",
+    "de": "Import fehlgeschlagen: {detail}",
+    "placeholders": {
+      "detail": "String"
+    }
+  },
+  "importDefaultName": {
+    "en": "Imported app",
+    "de": "Importierte App"
+  },
+  "importSharedName": {
+    "en": "Shared app",
+    "de": "Geteilte App"
+  },
+  "importSampleName": {
+    "en": "Sample (shinylive)",
+    "de": "Beispiel (shinylive)"
+  },
+  "importSampleRawName": {
+    "en": "Raw R sample",
+    "de": "R-Quelltext-Beispiel"
+  },
+  "emptyTitle": {
+    "en": "The display case is empty",
+    "de": "Die Vitrine ist leer"
+  },
+  "emptyBody": {
+    "en": "Import a Shiny app to run it offline.",
+    "de": "Importiere eine Shiny-App, um sie offline auszuführen."
+  },
+  "tagOnlineOnly": {
+    "en": "Online only",
+    "de": "Nur online"
+  },
+  "appDetails": {
+    "en": "Details",
+    "de": "Details"
+  },
+  "appDetailsFor": {
+    "en": "Details for {name}",
+    "de": "Details zu {name}",
+    "placeholders": {
+      "name": "String"
+    }
+  },
+  "appRename": {
+    "en": "Rename",
+    "de": "Umbenennen"
+  },
+  "appNameHint": {
+    "en": "App name",
+    "de": "App-Name"
+  },
+  "appDeleteTitle": {
+    "en": "Delete app?",
+    "de": "App löschen?"
+  },
+  "appDeleteBody": {
+    "en": "Remove “{name}” and its staged files? This cannot be undone.",
+    "de": "„{name}“ und die bereitgestellten Dateien entfernen? Das lässt sich nicht rückgängig machen.",
+    "placeholders": {
+      "name": "String"
+    }
+  },
+  "appLaunchOffline": {
+    "en": "Launch (offline)",
+    "de": "Starten (offline)"
+  },
+  "appOpenOnline": {
+    "en": "Open (online)",
+    "de": "Öffnen (online)"
+  },
+  "appImported": {
+    "en": "Imported",
+    "de": "Importiert"
+  },
+  "appLastRun": {
+    "en": "Last run",
+    "de": "Zuletzt"
+  },
+  "appLastRunFull": {
+    "en": "Last run",
+    "de": "Zuletzt ausgeführt"
+  },
+  "appNever": {
+    "en": "Never",
+    "de": "Nie"
+  },
+  "appSource": {
+    "en": "Source",
+    "de": "Quelle"
+  },
+  "appResolveFailed": {
+    "en": "This app failed to resolve.",
+    "de": "Die Pakete dieser App konnten nicht aufgelöst werden."
+  },
+  "appPackagesMaybeMissing": {
+    "en": "Some packages may be unavailable.",
+    "de": "Einige Pakete sind eventuell nicht verfügbar."
+  },
+  "resolutionNotBundled": {
+    "en": "Not bundled (needs a connection at launch): {packages}",
+    "de": "Nicht mitgeliefert (braucht beim Start eine Verbindung): {packages}",
+    "placeholders": {
+      "packages": "String"
+    }
+  },
+  "launchResolutionFailed": {
+    "en": "Resolution failed",
+    "de": "Auflösung fehlgeschlagen"
+  },
+  "launchPackageWarnings": {
+    "en": "Package warnings",
+    "de": "Paketwarnungen"
+  },
+  "launchAnywayBody": {
+    "en": "{detail}\n\nLaunch anyway? Missing packages would need a connection at launch.",
+    "de": "{detail}\n\nTrotzdem starten? Fehlende Pakete bräuchten beim Start eine Verbindung.",
+    "placeholders": {
+      "detail": "String"
+    }
+  },
+  "launchAnyway": {
+    "en": "Launch anyway",
+    "de": "Trotzdem starten"
+  },
+  "sourceShinylive": {
+    "en": "Shinylive bundle",
+    "de": "Shinylive-Bundle"
+  },
+  "sourceRaw": {
+    "en": "Raw Shiny source",
+    "de": "Shiny-Quelltext"
+  },
+  "sourcePackage": {
+    "en": "Package app",
+    "de": "Paket-App"
+  },
+  "sourceLiveUrl": {
+    "en": "Live URL",
+    "de": "Live-URL"
+  },
+  "statePending": {
+    "en": "Pending",
+    "de": "Ausstehend"
+  },
+  "stateReady": {
+    "en": "Ready",
+    "de": "Bereit"
+  },
+  "stateWarnings": {
+    "en": "Warnings",
+    "de": "Warnungen"
+  },
+  "stateFailed": {
+    "en": "Failed",
+    "de": "Fehlgeschlagen"
+  },
+  "stateNotApplicable": {
+    "en": "N/A",
+    "de": "–"
+  },
+  "settingsTitle": {
+    "en": "Settings",
+    "de": "Einstellungen"
+  },
+  "settingsAppearance": {
+    "en": "APPEARANCE",
+    "de": "DARSTELLUNG"
+  },
+  "settingsRuntime": {
+    "en": "RUNTIME",
+    "de": "LAUFZEIT"
+  },
+  "settingsAbout": {
+    "en": "ABOUT",
+    "de": "ÜBER"
+  },
+  "settingsWebrConsole": {
+    "en": "WebR Console",
+    "de": "WebR-Konsole"
+  },
+  "settingsWebrConsoleHint": {
+    "en": "Offline R {version} REPL — boot test",
+    "de": "Offline-R-{version}-REPL – Starttest",
+    "placeholders": {
+      "version": "String"
+    }
+  },
+  "settingsAboutBody": {
+    "en": "Offline Shiny app runner.",
+    "de": "Offline-Ausführung von Shiny-Apps."
+  },
+  "settingsLicenses": {
+    "en": "Open-source licenses",
+    "de": "Open-Source-Lizenzen"
+  },
+  "settingsLanguage": {
+    "en": "App language",
+    "de": "App-Sprache"
+  },
+  "settingsMode": {
+    "en": "Mode",
+    "de": "Modus"
+  },
+  "modeSystem": {
+    "en": "System",
+    "de": "System"
+  },
+  "modeLight": {
+    "en": "Light",
+    "de": "Hell"
+  },
+  "modeDark": {
+    "en": "Dark",
+    "de": "Dunkel"
+  },
+  "languageSystem": {
+    "en": "System",
+    "de": "System"
+  },
+  "settingsAccent": {
+    "en": "Accent colour",
+    "de": "Akzentfarbe"
+  },
+  "accentCoderBlue": {
+    "en": "Coder blue",
+    "de": "Coder-Blau"
+  },
+  "accentGreen": {
+    "en": "Green",
+    "de": "Grün"
+  },
+  "accentYellow": {
+    "en": "Yellow",
+    "de": "Gelb"
+  },
+  "accentOrange": {
+    "en": "Orange",
+    "de": "Orange"
+  },
+  "accentRed": {
+    "en": "Red",
+    "de": "Rot"
+  },
+  "accentPurple": {
+    "en": "Purple",
+    "de": "Violett"
+  },
+  "accentGraphite": {
+    "en": "Graphite",
+    "de": "Graphit"
+  },
+  "settingsAppearanceNote": {
+    "en": "Language, mode and accent colour apply at once. Default: Hugo Coder palette.",
+    "de": "Sprache, Modus und Akzentfarbe gelten sofort. Voreinstellung: Hugo-Coder-Palette."
+  },
+  "consoleTitle": {
+    "en": "WebR Console",
+    "de": "WebR-Konsole"
+  },
+  "consoleUnpacking": {
+    "en": "Unpacking WebR runtime…",
+    "de": "WebR-Laufzeit wird entpackt …"
+  },
+  "consoleFailed": {
+    "en": "WebR failed to start:\n\n{detail}",
+    "de": "WebR konnte nicht starten:\n\n{detail}",
+    "placeholders": {
+      "detail": "String"
+    }
+  },
+  "consoleLive": {
+    "en": "● R session live (offline)",
+    "de": "● R-Sitzung aktiv (offline)"
+  },
+  "consoleStarting": {
+    "en": "○ starting…",
+    "de": "○ startet …"
+  },
+  "consoleStatusBooting": {
+    "en": "○ booting",
+    "de": "○ startet"
+  },
+  "runnerFailed": {
+    "en": "Failed to launch:\n\n{detail}",
+    "de": "Start fehlgeschlagen:\n\n{detail}",
+    "placeholders": {
+      "detail": "String"
+    }
+  },
+  "runnerAppJsonMissing": {
+    "en": "Staged app.json is missing — re-import this app.",
+    "de": "Die bereitgestellte app.json fehlt – importiere diese App erneut."
+  },
+  "runnerFilesMissing": {
+    "en": "Staged files are missing — re-import this app.",
+    "de": "Die bereitgestellten Dateien fehlen – importiere diese App erneut."
+  },
+  "webConsolePlaceholder": {
+    "en": "starting WebR…",
+    "de": "WebR startet …"
+  },
+  "webConsoleBooting": {
+    "en": "Booting WebR {version} (R {rVersion}) — offline…",
+    "de": "WebR {version} (R {rVersion}) startet – offline …",
+    "placeholders": {
+      "version": "String",
+      "rVersion": "String"
+    }
+  },
+  "webConsolePlatform": {
+    "en": "Platform:",
+    "de": "Plattform:"
+  },
+  "webConsoleChannel": {
+    "en": "Channel:",
+    "de": "Kanal:"
+  },
+  "webConsoleIsolated": {
+    "en": "SharedArrayBuffer (cross-origin isolated)",
+    "de": "SharedArrayBuffer (Cross-Origin-isoliert)"
+  },
+  "webConsoleNotIsolated": {
+    "en": "PostMessage (no isolation)",
+    "de": "PostMessage (ohne Isolierung)"
+  },
+  "webConsoleReady": {
+    "en": "WebR is ready. Type R expressions below.",
+    "de": "WebR ist bereit. Gib unten R-Ausdrücke ein."
+  },
+  "webConsoleInitError": {
+    "en": "Init error:",
+    "de": "Startfehler:"
+  },
+  "shareReadFailed": {
+    "en": "Could not read the shared files. Retry from Files.",
+    "de": "Die geteilten Dateien konnten nicht gelesen werden. Versuche es erneut über „Dateien“."
+  },
+  "shareReceiveFailed": {
+    "en": "Could not receive the share. Retry from Files.",
+    "de": "Die Freigabe konnte nicht empfangen werden. Versuche es erneut über „Dateien“."
+  },
+  "shareImportFailed": {
+    "en": "Could not import {path}. Use a readable .zip or app.R (or ui.R with server.R) within the import limit. Source files are unchanged.",
+    "de": "{path} konnte nicht importiert werden. Verwende ein lesbares .zip oder app.R (oder ui.R mit server.R) innerhalb der Importgrenze. Die Quelldateien bleiben unverändert.",
+    "placeholders": {
+      "path": "String"
+    }
+  },
+  "shareSourcesFailed": {
+    "en": "Could not import the shared R sources. Include app.R, or both ui.R and server.R. Source files are unchanged.",
+    "de": "Die geteilten R-Quellen konnten nicht importiert werden. Füge app.R oder ui.R und server.R bei. Die Quelldateien bleiben unverändert."
+  },
+  "errorSizeLimit": {
+    "en": "Import exceeds the size limit.",
+    "de": "Der Import überschreitet die Größengrenze."
+  },
+  "errorNotZip": {
+    "en": "Not a valid zip archive.",
+    "de": "Kein gültiges ZIP-Archiv."
+  },
+  "errorNotShinyApp": {
+    "en": "Not a recognized Shiny app or shinylive bundle.",
+    "de": "Keine erkannte Shiny-App und kein shinylive-Bundle."
+  },
+  "errorSourcesLimit": {
+    "en": "Source files exceed the import limit.",
+    "de": "Die Quelldateien überschreiten die Importgrenze."
+  },
+  "errorNoAppR": {
+    "en": "No app.R (or ui.R + server.R) found in the source.",
+    "de": "Im Quelltext wurde keine app.R (oder ui.R + server.R) gefunden."
+  },
+  "errorUrlScheme": {
+    "en": "Enter an HTTP or HTTPS URL.",
+    "de": "Gib eine HTTP- oder HTTPS-URL ein."
+  },
+  "errorHttpStatus": {
+    "en": "Download failed (HTTP {status}).",
+    "de": "Download fehlgeschlagen (HTTP {status}).",
+    "placeholders": {
+      "status": "String"
+    }
+  },
+  "errorArchiveUnsafe": {
+    "en": "The archive contains unsafe or duplicate paths.",
+    "de": "Das Archiv enthält unsichere oder doppelte Pfade."
+  },
+  "errorArchiveLinks": {
+    "en": "Archives and staged apps cannot contain symbolic links.",
+    "de": "Archive und bereitgestellte Apps dürfen keine symbolischen Links enthalten."
+  },
+  "errorArchiveEmpty": {
+    "en": "The archive contains no app files.",
+    "de": "Das Archiv enthält keine App-Dateien."
+  },
+  "errorRuntimeIncomplete": {
+    "en": "The bundled runtime is incomplete.",
+    "de": "Die mitgelieferte Laufzeitumgebung ist unvollständig."
+  },
+  "errorTimeout": {
+    "en": "The download timed out.",
+    "de": "Der Download hat zu lange gedauert."
+  },
+  "errorNetwork": {
+    "en": "The download failed. Check the connection and the URL.",
+    "de": "Der Download ist fehlgeschlagen. Prüfe die Verbindung und die URL."
+  }
+}

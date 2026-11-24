@@ -18,11 +18,5 @@ enum ResolutionState {
   /// Not applicable (live URL runs its R on the server).
   notApplicable;
 
-  String get label => switch (this) {
-        ResolutionState.pending => 'Pending',
-        ResolutionState.ready => 'Ready',
-        ResolutionState.warnings => 'Warnings',
-        ResolutionState.failed => 'Failed',
-        ResolutionState.notApplicable => 'N/A',
-      };
+  // Display names are localized in lib/l10n/labels.dart.
 }

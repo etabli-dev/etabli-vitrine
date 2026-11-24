@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import 'staging_service.dart';
+import '../features/import/import_errors.dart';
 
 /// Prepare a complete version beside the previous runtime, then swap it in.
 /// A failed load, extraction or validation leaves the previous version intact.
@@ -44,7 +45,8 @@ class RuntimeAssets {
     final root = Directory(p.join(support.path, name));
     if (await FileSystemEntity.type(root.path, followLinks: false) ==
         FileSystemEntityType.link) {
-      throw const FormatException(
+      throw const ImportException(
+        ImportErrorKind.runtimeIncomplete,
         'Runtime directory cannot be a symbolic link.',
       );
     }
@@ -72,7 +74,10 @@ class RuntimeAssets {
         p.join(fresh.path, '.runtime_version'),
       ).writeAsString(version, flush: true);
       if (!await _valid(fresh)) {
-        throw const FormatException('The bundled runtime is incomplete.');
+        throw const ImportException(
+          ImportErrorKind.runtimeIncomplete,
+          'The bundled runtime is incomplete.',
+        );
       }
       final hadPrevious = await root.exists();
       if (hadPrevious) {

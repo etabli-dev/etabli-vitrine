@@ -7,35 +7,49 @@ import 'package:go_router/go_router.dart';
 
 import '../../data/models/resolution_status.dart';
 import '../../data/models/shiny_app.dart';
-import '../../theme/coder_theme_vitrine_tokens.dart';
+import '../../l10n/l10n.dart';
+import '../../l10n/labels.dart';
+import '../../theme/coder_theme_vitrine.dart';
 
 /// Launches an app, surfacing package-resolution warnings first so the user
 /// knows before a (possibly failing) offline run.
-Future<void> launchApp(BuildContext context, WidgetRef ref, ShinyApp app) async {
-  final needsConfirm = app.resolutionState == ResolutionState.warnings ||
+Future<void> launchApp(
+  BuildContext context,
+  WidgetRef ref,
+  ShinyApp app,
+) async {
+  final needsConfirm =
+      app.resolutionState == ResolutionState.warnings ||
       app.resolutionState == ResolutionState.failed;
 
   if (needsConfirm) {
     final failed = app.resolutionState == ResolutionState.failed;
+    final l = context.l10n;
+    final colors = VitrineColors.of(context);
+    final detail = app.resolutionDetail != null
+        ? l.resolutionDetailText(app.resolutionDetail!)
+        : l.appPackagesMaybeMissing;
     final proceed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(failed ? 'Resolution failed' : 'Package warnings'),
-        content: Text(
-          '${app.resolutionDetail ?? 'Some packages may be unavailable.'}\n\n'
-          'Launch anyway? Missing packages would need a connection at launch.',
+        title: Text(
+          failed ? l.launchResolutionFailed : l.launchPackageWarnings,
         ),
+        content: Text(l.launchAnywayBody(detail)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l.commonCancel, maxLines: 1, softWrap: false),
           ),
           FilledButton(
             style: failed
-                ? FilledButton.styleFrom(backgroundColor: VitrineTokens.warn)
+                ? FilledButton.styleFrom(
+                    backgroundColor: colors.warn,
+                    foregroundColor: colors.onAccent,
+                  )
                 : null,
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Launch anyway'),
+            child: Text(l.launchAnyway, maxLines: 1, softWrap: false),
           ),
         ],
       ),

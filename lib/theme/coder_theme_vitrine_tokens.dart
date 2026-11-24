@@ -1,54 +1,28 @@
 // Copyright 2026 R. Heller
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import 'package:flutter/material.dart';
-
 import 'coder_theme.dart';
 
-/// Vitrine design tokens. Central palette (accent + light/dark surfaces)
-/// derives from [Coder] (synced from `_style/tokens/coder-design-system.json`).
-/// Vitrine-only semantic colors (warn/error/info) and hex-string mirrors for
-/// embedded WebView / R / Shiny code live below.
+/// Vitrine design tokens. The neutrals are the Hugo Coder palette and the accent is the user's choice
+/// (appearance.dart); widgets read colours from the theme (`Theme.of(context).colorScheme`,
+/// [VitrineColors]). Hex-string mirrors for embedded WebView / R code live below.
 class VitrineTokens {
   VitrineTokens._();
 
-  // ── Brand (central tokens) ───────────────────────────────────────────
-  static const Color accent = Coder.accentBase;
-  static const Color accentPressed = Coder.accentDark;
-
-  // ── Light palette (central tokens) ───────────────────────────────────
-  static const Color lightBg = Coder.lBackground;
-  static const Color lightSurface = Coder.lSurface;
-  static const Color lightBorder = Coder.lBorder;
-  static const Color lightText = Coder.lTextPrimary;
-  static const Color lightTextMuted = Coder.lTextSecondary;
-
-  // ── Dark palette (central tokens) ────────────────────────────────────
-  static const Color darkBg = Coder.dBackground;
-  static const Color darkSurface = Coder.dSurface;
-  static const Color darkBorder = Coder.dBorder;
-  static const Color darkText = Coder.dTextPrimary;
-  static const Color darkTextMuted = Coder.dTextSecondary;
-
-  // ── Vitrine-specific status colors ───────────────────────────────────
-  static const Color warn = Color(0xFFD98A00);
-  static const Color error = Color(0xFFD64545);
-  static const Color info = Color(0xFF3B82C4);
-
-  // ── Hex-string mirrors for code-as-string (WebView CSS, embedded R)
-  // Each value must match the corresponding Color constant above. Keep in
-  // sync — the audit gate only inspects `Color(0x...)` constructors so these
-  // are the only place hex strings are allowed.
-  static const String accentHex = '#28A745';
-  static const String darkBgHex = '#121417';
-  static const String darkTextHex = '#F2F4F6';
-  static const String darkTextMutedHex = '#A6ACB3';
-  static const String darkBorderHex = '#33373D';
-  static const String warnHex = '#D98A00';
-  static const String errorHex = '#D64545';
+  // ── Hex-string mirrors for code-as-string (WebView CSS, embedded R) ──
+  // The WebR console page is always dark: Hugo Coder dark neutrals and state colours (appearance.dart).
+  // The accent arrives at run time as a query parameter; this is its default (Coder blue, dark).
+  static const String accentHex = '#42A5F5';
+  static const String darkBgHex = '#212121';
+  static const String darkTextHex = '#DADADA';
+  static const String darkTextMutedHex = '#BDBDBD';
+  static const String darkBorderHex = '#4F4F4F';
+  static const String warnHex = '#FFCA28';
+  static const String errorHex = '#EF9A9A';
 
   // ── Typography ───────────────────────────────────────────────────────
   static const String monoFamily = Coder.fontMono;
+  static const List<String> monoFallback = ['Menlo', 'monospace'];
 
   // ── Spacing scale (whitespace-heavy) ─────────────────────────────────
   static const double space1 = Coder.xs;

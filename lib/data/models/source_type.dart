@@ -16,12 +16,7 @@ enum SourceType {
   /// Live hosted Shiny URL. Online-only — never offline-capable.
   liveUrl;
 
-  String get label => switch (this) {
-        SourceType.shinyliveZip => 'Shinylive bundle',
-        SourceType.rawSource => 'Raw Shiny source',
-        SourceType.packageApp => 'Package app',
-        SourceType.liveUrl => 'Live URL',
-      };
+  // Display names are localized in lib/l10n/labels.dart.
 
   /// Whether this source type can run without a network connection.
   bool get isOfflineCapable => this != SourceType.liveUrl;

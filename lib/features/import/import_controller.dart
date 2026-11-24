@@ -18,6 +18,8 @@ import '../../theme/coder_theme_vitrine_tokens.dart';
 import 'import_router.dart';
 import 'download.dart';
 import 'package_resolver.dart';
+import 'import_errors.dart';
+import '../../l10n/l10n.dart';
 
 final importControllerProvider = Provider<ImportController>(
   (ref) => ImportController(
@@ -40,7 +42,7 @@ class ImportController {
   /// runs fully offline with no extra assets to ship.
   Future<ShinyApp> importSample() => importRawSourceFiles(
     {'app.R': Uint8List.fromList(utf8.encode(_sampleShinyliveAppR))},
-    name: 'Sample (shinylive)',
+    name: L10n.current.importSampleName,
     sourceUri: 'bundled:sample-shinylive',
   );
 
@@ -80,7 +82,10 @@ shinyApp(ui, server)
     String? sourceUri,
   }) async {
     if (zipBytes.length > maxImportBytes) {
-      throw const FormatException('Import exceeds the size limit.');
+      throw const ImportException(
+        ImportErrorKind.sizeLimit,
+        'Import exceeds the size limit.',
+      );
     }
     final id = _uuid.v4();
     await _staging.stageZip(zipBytes, id);
@@ -111,13 +116,19 @@ shinyApp(ui, server)
     String? sourceUri,
   }) async {
     if (zipBytes.length > maxImportBytes) {
-      throw const FormatException('Import exceeds the size limit.');
+      throw const ImportException(
+        ImportErrorKind.sizeLimit,
+        'Import exceeds the size limit.',
+      );
     }
     final Archive archive;
     try {
       archive = ZipDecoder().decodeBytes(zipBytes);
     } catch (_) {
-      throw const FormatException('Not a valid zip archive.');
+      throw const ImportException(
+        ImportErrorKind.notZip,
+        'Not a valid zip archive.',
+      );
     }
     StagingService.validateArchive(archive);
     final names = archive.where((e) => e.isFile).map((e) => e.name);
@@ -152,7 +163,8 @@ shinyApp(ui, server)
         return importRawSourceFiles(files, name: name, sourceUri: sourceUri);
 
       case ImportKind.unknown:
-        throw const FormatException(
+        throw const ImportException(
+          ImportErrorKind.notShinyApp,
           'Not a recognized Shiny app or shinylive bundle.',
         );
     }
@@ -165,7 +177,11 @@ shinyApp(ui, server)
     final fallbackName = p.basenameWithoutExtension(uri.path);
     return importZipBytes(
       bytes,
-      name: name ?? (fallbackName.isEmpty ? 'Imported app' : fallbackName),
+      name:
+          name ??
+          (fallbackName.isEmpty
+              ? L10n.current.importDefaultName
+              : fallbackName),
       sourceUri: url,
     );
   }
@@ -201,7 +217,7 @@ shinyApp(ui, server)
   /// Imports the embedded raw-source sample app.
   Future<ShinyApp> importSampleRaw() => importRawSourceFiles({
     'app.R': Uint8List.fromList(utf8.encode(_sampleAppR)),
-  }, name: 'Raw R sample');
+  }, name: L10n.current.importSampleRawName);
 
   /// Stages raw Shiny source as a shinylive `app.json`, resolves packages, and
   /// records the library entry. Text files (.R, .csv, …) become `type:text`
@@ -219,10 +235,14 @@ shinyApp(ui, server)
     }
     if (total > maxImportBytes ||
         files.length > StagingService.maxArchiveFiles) {
-      throw const FormatException('Source files exceed the import limit.');
+      throw const ImportException(
+        ImportErrorKind.sourcesLimit,
+        'Source files exceed the import limit.',
+      );
     }
     if (!_looksLikeShinyApp(files.keys)) {
-      throw const FormatException(
+      throw const ImportException(
+        ImportErrorKind.noAppR,
         'No app.R (or ui.R + server.R) found in the source.',
       );
     }

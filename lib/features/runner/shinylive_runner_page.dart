@@ -15,6 +15,8 @@ import '../../runtime/local_http_server.dart';
 import '../../runtime/shinylive_engine.dart';
 import '../../runtime/staging_service.dart';
 import '../../theme/coder_theme_vitrine_tokens.dart';
+import '../../l10n/labels.dart';
+import '../../l10n/l10n.dart';
 
 /// Runs an imported shinylive bundle offline. The bundle is self-contained
 /// (ships its own runtime + service worker), so it is served *plain* — no
@@ -60,7 +62,13 @@ class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
       // Ownership has not yet transferred to the widget. A metadata failure
       // after binding must still release the listening socket.
       await server?.dispose();
-      if (mounted) setState(() => _error = '$e');
+      if (mounted) {
+        setState(
+          () => _error = e is StateError
+              ? e.message.toString()
+              : L10n.current.importErrorText(e),
+        );
+      }
     }
   }
 
@@ -77,7 +85,7 @@ class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
         '${(await staging.dirFor(widget.app.stagedPath!)).path}/app.json',
       );
       if (!await appJsonFile.exists()) {
-        throw StateError('Staged app.json is missing — re-import this app.');
+        throw StateError(L10n.current.runnerAppJsonMissing);
       }
       final appJson = await appJsonFile.readAsString();
       final index = ShinyliveEngine.indexHtml();
@@ -91,7 +99,7 @@ class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
     // shinyliveZip: serve the self-contained staged bundle.
     final stagingDir = await staging.dirFor(widget.app.stagedPath!);
     if (!await stagingDir.exists()) {
-      throw StateError('Staged files are missing — re-import this app.');
+      throw StateError(L10n.current.runnerFilesMissing);
     }
     return LocalHttpServer(rootDir: stagingDir, crossOriginIsolated: false);
   }
@@ -116,7 +124,7 @@ class _ShinyliveRunnerPageState extends ConsumerState<ShinyliveRunnerPage> {
         child: Padding(
           padding: const EdgeInsets.all(VitrineTokens.space5),
           child: Text(
-            'Failed to launch:\n\n$_error',
+            context.l10n.runnerFailed(_error!),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium,
           ),

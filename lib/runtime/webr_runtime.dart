@@ -1,8 +1,11 @@
 // Copyright 2026 R. Heller
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import 'dart:convert';
 import 'dart:io';
 
+import '../l10n/app_localizations.dart';
+import '../theme/appearance.dart';
 import '../theme/coder_theme_vitrine_tokens.dart';
 import 'local_http_server.dart';
 import 'runtime_assets.dart';
@@ -19,6 +22,9 @@ import 'runtime_assets.dart';
 /// WebView declines isolation, WebR transparently falls back to PostMessage.
 class WebRRuntime {
   static const String webrVersion = '0.6.0';
+
+  /// The R version the bundled WebR runs (shown in the console banner).
+  static const String rVersion = '4.6.0';
   static const String _assetZip = 'assets/webr/webr-dist.zip';
 
   LocalHttpServer? _server;
@@ -45,6 +51,27 @@ class WebRRuntime {
     _server = null;
   }
 
+  /// The console page with its texts in the app's language and the user's accent (dark value).
+  static Uri consoleUri(Uri baseUri, AppLocalizations l, AccentChoice accent) {
+    final texts = {
+      'placeholder': l.webConsolePlaceholder,
+      'booting': l.webConsoleBooting(webrVersion, rVersion),
+      'platform': l.webConsolePlatform,
+      'channel': l.webConsoleChannel,
+      'isolated': l.webConsoleIsolated,
+      'notIsolated': l.webConsoleNotIsolated,
+      'ready': l.webConsoleReady,
+      'initError': l.webConsoleInitError,
+    };
+    return baseUri.replace(
+      queryParameters: {
+        't': base64Url.encode(utf8.encode(jsonEncode(texts))),
+        'accent': accent.dark.toRadixString(16).padLeft(6, '0').toUpperCase(),
+        'lang': l.localeName,
+      },
+    );
+  }
+
   final _assets = RuntimeAssets(
     name: 'webr_runtime',
     version: '$webrVersion-prepared-1',
@@ -55,7 +82,8 @@ class WebRRuntime {
 
   /// The runner document: boots WebR from this same origin, prints the R
   /// banner, and exposes a minimal REPL. Output is mirrored to Flutter via the
-  /// `webr` JS handler.
+  /// `webr` JS handler. Its texts and accent arrive as query parameters
+  /// (see [consoleUri]); English and Coder blue are the fallbacks.
   static const String _indexHtml =
       '''<!doctype html>
 <html lang="en">
@@ -64,7 +92,7 @@ class WebRRuntime {
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>WebR Console</title>
 <style>
-  :root { color-scheme: dark; }
+  :root { color-scheme: dark; --accent: ${VitrineTokens.accentHex}; }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: ${VitrineTokens.darkBgHex}; color: ${VitrineTokens.darkTextHex};
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
@@ -73,11 +101,11 @@ class WebRRuntime {
     word-break: break-word; line-height: 1.5; }
   .stderr { color: ${VitrineTokens.warnHex}; }
   .err { color: ${VitrineTokens.errorHex}; }
-  .cmd { color: ${VitrineTokens.accentHex}; }
+  .cmd { color: var(--accent); }
   .muted { color: ${VitrineTokens.darkTextMutedHex}; }
   #row { display: flex; align-items: center; border-top: 1px solid ${VitrineTokens.darkBorderHex};
     padding: 8px 12px; gap: 8px; }
-  #row span { color: ${VitrineTokens.accentHex}; }
+  #row span { color: var(--accent); }
   #cmd { flex: 1; background: transparent; border: none; color: ${VitrineTokens.darkTextHex};
     font: inherit; outline: none; }
   #cmd:disabled { opacity: 0.4; }
@@ -93,6 +121,30 @@ import { WebR } from './webr.js';
 const out = document.getElementById('out');
 const input = document.getElementById('cmd');
 
+// Texts in the app's language and the accent colour, from the query (base64url JSON / RRGGBB hex).
+const params = new URLSearchParams(window.location.search);
+let T = {
+  placeholder: 'starting WebR…', booting: 'Booting WebR 0.6.0 (R 4.6.0) — offline…',
+  platform: 'Platform:', channel: 'Channel:', isolated: 'SharedArrayBuffer (cross-origin isolated)',
+  notIsolated: 'PostMessage (no isolation)', ready: 'WebR is ready. Type R expressions below.',
+  initError: 'Init error:',
+};
+try {
+  const raw = params.get('t');
+  if (raw) {
+    const bin = atob(raw.replace(/-/g, '+').replace(/_/g, '/'));
+    const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+    T = Object.assign(T, JSON.parse(new TextDecoder().decode(bytes)));
+  }
+} catch (_) {}
+const accent = params.get('accent');
+if (accent && /^[0-9A-Fa-f]{6}\$/.test(accent)) {
+  document.documentElement.style.setProperty('--accent', '#' + accent);
+}
+const lang = params.get('lang');
+if (lang && /^[a-z]{2}\$/.test(lang)) document.documentElement.lang = lang;
+input.placeholder = T.placeholder;
+
 function print(text, cls) {
   const div = document.createElement('div');
   if (cls) div.className = cls;
@@ -105,7 +157,7 @@ function bridge(type, data) {
 }
 
 async function main() {
-  print('Booting WebR ' + '0.6.0' + ' (R 4.6.0) — offline…', 'muted');
+  print(T.booting, 'muted');
   bridge('status', 'booting');
 
   const webR = new WebR({ baseUrl: window.location.origin + '/' });
@@ -116,10 +168,9 @@ async function main() {
   const platform = await webR.evalRString('R.version\$platform');
 
   print(version);
-  print('Platform: ' + platform);
-  print('Channel: ' + (isolated ? 'SharedArrayBuffer (cross-origin isolated)'
-                                 : 'PostMessage (no isolation)'), 'muted');
-  print('WebR is ready. Type R expressions below.', 'cmd');
+  print(T.platform + ' ' + platform);
+  print(T.channel + ' ' + (isolated ? T.isolated : T.notIsolated), 'muted');
+  print(T.ready, 'cmd');
   bridge('ready', { version, platform, isolated });
 
   const shelter = await new webR.Shelter();
@@ -152,7 +203,7 @@ async function main() {
 }
 
 main().catch((e) => {
-  print('Init error: ' + (e && e.message ? e.message : e), 'err');
+  print(T.initError + ' ' + (e && e.message ? e.message : e), 'err');
   bridge('error', String(e && e.message ? e.message : e));
 });
 </script>

@@ -1,44 +1,89 @@
 // Copyright 2026 R. Heller
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Persisted Auto/Light/Dark preference for Établi Vitrine.
-///
-/// Theme is a user preference (not a secret) so it lives in
-/// [SharedPreferences]; credentials use secure storage instead.
-const _prefsKey = 'vitrine.themeMode';
+import 'appearance.dart';
+
+/// Persisted appearance for Établi Vitrine: System/Light/Dark, the accent colour and the app language,
+/// under the keys shared with the other Établi apps (appearance.dart). These are preferences, not
+/// secrets, so they live in [SharedPreferences]; credentials use secure storage instead.
+
+/// The earlier Auto/Light/Dark key of this app; its values ("system", "light", "dark") are the same as
+/// [AppearanceMode]'s raw values.
+const legacyThemeModeKey = 'vitrine.themeMode';
 
 final sharedPrefsProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError('sharedPrefsProvider must be overridden in main()');
 });
 
-final themeModeProvider =
-    NotifierProvider<ThemeModeController, ThemeMode>(ThemeModeController.new);
+/// Moves a mode saved under the earlier key to [AppearanceKeys.mode] once; a value already there wins.
+Future<void> migrateLegacyThemeMode(SharedPreferences prefs) async {
+  final legacy = prefs.getString(legacyThemeModeKey);
+  if (legacy == null) return;
+  if (prefs.getString(AppearanceKeys.mode) == null) {
+    await prefs.setString(
+      AppearanceKeys.mode,
+      AppearanceMode.fromStored(legacy).name,
+    );
+  }
+  await prefs.remove(legacyThemeModeKey);
+}
 
-class ThemeModeController extends Notifier<ThemeMode> {
+final appearanceModeProvider =
+    NotifierProvider<AppearanceModeController, AppearanceMode>(
+      AppearanceModeController.new,
+    );
+
+class AppearanceModeController extends Notifier<AppearanceMode> {
   @override
-  ThemeMode build() {
-    final prefs = ref.read(sharedPrefsProvider);
-    return _decode(prefs.getString(_prefsKey));
-  }
+  AppearanceMode build() => AppearanceMode.fromStored(
+    ref.read(sharedPrefsProvider).getString(AppearanceKeys.mode),
+  );
 
-  Future<void> set(ThemeMode mode) async {
+  Future<void> set(AppearanceMode mode) async {
     state = mode;
-    await ref.read(sharedPrefsProvider).setString(_prefsKey, _encode(mode));
+    await ref
+        .read(sharedPrefsProvider)
+        .setString(AppearanceKeys.mode, mode.name);
   }
+}
 
-  static ThemeMode _decode(String? raw) => switch (raw) {
-        'light' => ThemeMode.light,
-        'dark' => ThemeMode.dark,
-        _ => ThemeMode.system,
-      };
+final accentProvider = NotifierProvider<AccentController, AccentChoice>(
+  AccentController.new,
+);
 
-  static String _encode(ThemeMode mode) => switch (mode) {
-        ThemeMode.light => 'light',
-        ThemeMode.dark => 'dark',
-        ThemeMode.system => 'system',
-      };
+class AccentController extends Notifier<AccentChoice> {
+  @override
+  AccentChoice build() => AccentChoice.fromStored(
+    ref.read(sharedPrefsProvider).getString(AppearanceKeys.accent),
+  );
+
+  Future<void> set(AccentChoice accent) async {
+    state = accent;
+    await ref
+        .read(sharedPrefsProvider)
+        .setString(AppearanceKeys.accent, accent.name);
+  }
+}
+
+final appLanguageProvider =
+    NotifierProvider<AppLanguageController, AppLanguage>(
+      AppLanguageController.new,
+    );
+
+/// The app language (System / Deutsch / English); views switch at once.
+class AppLanguageController extends Notifier<AppLanguage> {
+  @override
+  AppLanguage build() => AppLanguage.fromStored(
+    ref.read(sharedPrefsProvider).getString(AppearanceKeys.language),
+  );
+
+  Future<void> set(AppLanguage language) async {
+    state = language;
+    await ref
+        .read(sharedPrefsProvider)
+        .setString(AppearanceKeys.language, language.name);
+  }
 }

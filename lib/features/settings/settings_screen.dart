@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/l10n.dart';
 import '../../runtime/webr_runtime.dart';
-import '../../theme/theme_controller.dart';
+import '../../theme/appearance.dart';
+import '../../theme/coder_theme_vitrine.dart';
 import '../../theme/coder_theme_vitrine_tokens.dart';
+import '../../theme/theme_controller.dart';
 import '../../widgets/bordered_card.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -15,90 +18,59 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mode = ref.watch(themeModeProvider);
+    final l = context.l10n;
+    final colors = VitrineColors.of(context);
+    final t = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l.settingsTitle)),
       body: ListView(
         padding: const EdgeInsets.all(VitrineTokens.space4),
         children: [
-          Text('APPEARANCE', style: Theme.of(context).textTheme.labelSmall),
+          _SectionTitle(l.settingsAppearance),
           const SizedBox(height: VitrineTokens.space3),
-          BorderedCard(
-            padding: const EdgeInsets.all(VitrineTokens.space2),
-            child: RadioGroup<ThemeMode>(
-              groupValue: mode,
-              onChanged: (v) {
-                if (v != null) ref.read(themeModeProvider.notifier).set(v);
-              },
-              child: Column(
-                children: [
-                  for (final m in ThemeMode.values)
-                    RadioListTile<ThemeMode>(
-                      value: m,
-                      activeColor: VitrineTokens.accent,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: VitrineTokens.space2,
-                      ),
-                      title: Text(
-                        _label(m),
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
+          const BorderedCard(child: AppearanceSection()),
           const SizedBox(height: VitrineTokens.space5),
-          Text('RUNTIME', style: Theme.of(context).textTheme.labelSmall),
+          _SectionTitle(l.settingsRuntime),
           const SizedBox(height: VitrineTokens.space3),
           BorderedCard(
             onTap: () => context.push('/console'),
             child: Row(
               children: [
-                const Icon(Icons.terminal, color: VitrineTokens.accent),
+                Icon(Icons.terminal, color: colors.accent),
                 const SizedBox(width: VitrineTokens.space3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'WebR Console',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+                      Text(l.settingsWebrConsole, style: t.bodyMedium),
                       const SizedBox(height: VitrineTokens.space1),
                       Text(
-                        'Offline R ${WebRRuntime.webrVersion} REPL — boot test',
-                        style: Theme.of(context).textTheme.bodySmall,
+                        l.settingsWebrConsoleHint(WebRRuntime.webrVersion),
+                        style: t.bodySmall,
                       ),
                     ],
                   ),
                 ),
-                Icon(
-                  Icons.chevron_right,
-                  color: Theme.of(context).textTheme.bodySmall?.color,
-                ),
+                Icon(Icons.chevron_right, color: t.bodySmall?.color),
               ],
             ),
           ),
           const SizedBox(height: VitrineTokens.space5),
-          Text('ABOUT', style: Theme.of(context).textTheme.labelSmall),
+          _SectionTitle(l.settingsAbout),
           const SizedBox(height: VitrineTokens.space3),
           BorderedCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Établi Vitrine',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text('Établi Vitrine', style: t.titleMedium),
                 const SizedBox(height: VitrineTokens.space1),
-                Text(
-                  'Offline Shiny app runner.',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+                Text(l.settingsAboutBody, style: t.bodySmall),
                 TextButton(
-                  onPressed: () => showLicensePage(context: context),
-                  child: const Text('Open-source licenses'),
+                  onPressed: () => showLicensePage(
+                    context: context,
+                    applicationName: 'Établi Vitrine',
+                  ),
+                  child: Text(l.settingsLicenses, maxLines: 1, softWrap: false),
                 ),
               ],
             ),
@@ -107,10 +79,165 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  String _label(ThemeMode m) => switch (m) {
-    ThemeMode.system => 'Auto (follow system)',
-    ThemeMode.light => 'Light',
-    ThemeMode.dark => 'Dark',
-  };
+/// Settings → Appearance: the app language (menu), the mode (segmented) and the accent (swatches), the
+/// same as in the other Établi apps. Everything applies at once.
+class AppearanceSection extends ConsumerWidget {
+  const AppearanceSection({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mode = ref.watch(appearanceModeProvider);
+    final accent = ref.watch(accentProvider);
+    final language = ref.watch(appLanguageProvider);
+    final l = context.l10n;
+    final colors = VitrineColors.of(context);
+    final t = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(child: Text(l.settingsLanguage, style: t.bodyMedium)),
+            const SizedBox(width: VitrineTokens.space2),
+            DropdownButton<AppLanguage>(
+              key: const ValueKey('settings.appearance.language'),
+              value: language,
+              underline: const SizedBox.shrink(),
+              dropdownColor: colors.background,
+              style: t.bodyMedium,
+              onChanged: (v) {
+                if (v != null) ref.read(appLanguageProvider.notifier).set(v);
+              },
+              items: [
+                for (final option in AppLanguage.values)
+                  DropdownMenuItem(
+                    value: option,
+                    child: Text(
+                      l.languageLabel(option),
+                      maxLines: 1,
+                      softWrap: false,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: VitrineTokens.space3),
+        Text(l.settingsMode, style: t.bodyMedium),
+        const SizedBox(height: VitrineTokens.space2),
+        SizedBox(
+          width: double.infinity,
+          child: SegmentedButton<AppearanceMode>(
+            key: const ValueKey('settings.appearance.mode'),
+            showSelectedIcon: false,
+            segments: [
+              for (final option in AppearanceMode.values)
+                ButtonSegment(
+                  value: option,
+                  label: Text(
+                    l.modeLabel(option),
+                    maxLines: 1,
+                    softWrap: false,
+                  ),
+                ),
+            ],
+            selected: {mode},
+            onSelectionChanged: (sel) =>
+                ref.read(appearanceModeProvider.notifier).set(sel.first),
+          ),
+        ),
+        const SizedBox(height: VitrineTokens.space3),
+        ExcludeSemantics(child: Text(l.settingsAccent, style: t.bodyMedium)),
+        const SizedBox(height: VitrineTokens.space2),
+        Wrap(
+          children: [
+            for (final option in AccentChoice.values)
+              _Swatch(
+                choice: option,
+                selected: option == accent,
+                label: l.accentLabel(option),
+                hint: l.settingsAccent,
+                onTap: () => ref.read(accentProvider.notifier).set(option),
+              ),
+          ],
+        ),
+        const SizedBox(height: VitrineTokens.space2),
+        Text(l.settingsAppearanceNote, style: t.bodySmall),
+      ],
+    );
+  }
+}
+
+class _Swatch extends StatelessWidget {
+  const _Swatch({
+    required this.choice,
+    required this.selected,
+    required this.label,
+    required this.hint,
+    required this.onTap,
+  });
+
+  final AccentChoice choice;
+  final bool selected;
+  final String label;
+  final String hint;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final b = Theme.of(context).brightness;
+    final c = VitrineColors.of(context);
+    return Semantics(
+      key: ValueKey('settings.appearance.accent.${choice.name}'),
+      label: label,
+      hint: hint,
+      button: true,
+      selected: selected,
+      inMutuallyExclusiveGroup: true,
+      excludeSemantics: true,
+      onTap: onTap,
+      child: Tooltip(
+        message: label,
+        excludeFromSemantics: true,
+        child: InkWell(
+          onTap: onTap,
+          customBorder: const CircleBorder(),
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: Center(
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: choice.color(b),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: selected ? c.text : c.border,
+                    width: selected ? 2 : 1,
+                  ),
+                ),
+                child: selected
+                    ? Icon(Icons.check, size: 18, color: c.onAccent)
+                    : null,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    header: true,
+    child: Text(text, style: Theme.of(context).textTheme.labelSmall),
+  );
 }
